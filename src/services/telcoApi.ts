@@ -63,6 +63,27 @@ export function getRedirectUri(): string {
 }
 
 /**
+ * Lấy Authorize URL từ Backend API
+ */
+export async function getAuthorizeUrlInfo(
+  backendUrl: string,
+  redirectUri: string = getRedirectUri()
+): Promise<AuthorizeUrlResult> {
+  const endpoint = formatApiUrl(
+    backendUrl,
+    `/number-verification/authorize-url?redirectUri=${encodeURIComponent(redirectUri)}`
+  );
+  const res = await fetch(endpoint, {
+    method: 'GET',
+    headers: { 'Accept': 'application/json' },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to get authorize URL: HTTP ${res.status}`);
+  }
+  return await res.json();
+}
+
+/**
  * Bước 1 & 2: Lấy URL Authorize và mở Popup Viettel Consent xác thực mạng di động 4G/5G
  */
 export async function executeCarrierAuth(
