@@ -26,3 +26,4 @@ export async function GET(request: NextRequest) {
     scope: DEFAULT_SCOPE,
   });
 }
+
