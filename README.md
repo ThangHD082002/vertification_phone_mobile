@@ -1,56 +1,89 @@
-# Welcome to your Expo app 👋
+# ABC Bank - CAMARA Network API & SIM Swap Demo (Next.js)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Dự án mô phỏng ứng dụng Mobile Banking của **ABC Bank** kết nối và kiểm thử các API chuẩn viễn thông quốc tế **CAMARA**:
+- **CAMARA Number Verification v0.3**: Định danh số thuê bao ngầm qua mạng 4G/5G Viettel không cần gửi mã OTP SMS.
+- **CAMARA SIM Swap v0.4**: Kiểm tra lịch sử đổi SIM gần nhất nhằm phòng chống gian lận và chiếm đoạt tài khoản khi chuyển tiền giá trị lớn.
 
-## Get started
+Giao diện giữ nguyên 100% bản Figma & phong cách Mobile App với bảng màu xanh thẫm ngân hàng, hộp Terminal Console debug theo dõi từng bản tin API, ma trận 6 Test Cases và giả lập sinh trắc học FaceID (eKYC).
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## 🚀 Hướng dẫn chạy trên Local
 
 ```bash
-npm run reset-project
+# 1. Cài đặt thư viện
+npm install
+
+# 2. Khởi chạy server phát triển
+npm run dev
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+Mở trình duyệt tại [http://localhost:3000](http://localhost:3000).
 
-### Other setup steps
+---
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## 🌐 Deploy lên Vercel
 
-## Learn more
+Dự án được tối ưu hóa đặc biệt để deploy lên Vercel mà không cần cấu hình phức tạp:
 
-To learn more about developing your project with Expo, look at the following resources:
+### Cách 1: Deploy qua Vercel Dashboard (Khuyên dùng)
+1. Đẩy code lên GitHub repository.
+2. Đăng nhập [vercel.com](https://vercel.com) -> Chọn **Add New Project**.
+3. Import repository này từ GitHub.
+4. Framework Preset sẽ tự động nhận diện là **Next.js**.
+5. Bấm **Deploy**.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Cách 2: Deploy qua Vercel CLI
+```bash
+npm i -g vercel
+vercel
+```
 
-## Join the community
+---
 
-Join our community of developers creating universal apps.
+## 🛠️ Chế độ hoạt động (Modes)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. **Offline Simulator Mode (Mặc định khi deploy lên Vercel)**:
+   - Toàn bộ 6 kịch bản kiểm thử (TC-01 đến TC-06) đều có dữ liệu phản hồi mô phỏng chân thực, thời gian phản hồi thực tế và mã HTTP status code chuẩn CAMARA.
+   - Thích hợp để demo trực tiếp trên Vercel cho đối tác, khách hàng mà không cần dựng backend Java.
+
+2. **Real Backend Mode**:
+   - Mở **Dev Panel** (nút nổi `DEV: TC-01` góc phải dưới) -> Bật **"Kết nối Backend thật (:8088)"**.
+   - Nhập URL backend Spring Boot (ví dụ: `http://localhost:8088/api/v1` hoặc IP LAN `http://192.168.x.x:8088/api/v1`).
+   - Ứng dụng sẽ gọi trực tiếp các API:
+     - `GET /api/v1/number-verification/authorize-url`
+     - `POST /api/v1/number-verification/verify`
+     - `POST /api/v1/sim-swap/check`
+
+---
+
+## 📁 Cấu trúc thư mục
+
+```
+src/
+├── app/
+│   ├── page.tsx               # Màn A1: Đăng nhập / Nhập số điện thoại
+│   ├── verify-loading/        # Màn A2: Đang xác thực ngầm qua 4G Viettel
+│   ├── verify-success/        # Màn A3: Xác thực thuê bao thành công
+│   ├── verify-failed/         # Màn A4: Thất bại (Wifi) -> Fallback SMS OTP
+│   ├── dashboard/             # Màn B1: Trang chủ Dashboard ngân hàng
+│   ├── transfer/              # Màn B2: Chuyển tiền (giao dịch lớn >10M)
+│   ├── transfer-check/        # Màn B3: Đang quét lịch sử SIM Swap với Telco
+│   ├── transfer-success/      # Màn B4: SIM an toàn -> Chuyển tiền thành công
+│   ├── transfer-blocked/      # Màn B5: Phát hiện tráo SIM -> Khóa & yêu cầu eKYC
+│   ├── dev-panel/             # Màn hình quản lý ma trận 6 test cases & logs
+│   ├── telco-callback/        # Nhận OAuth callback từ cổng Telco
+│   ├── layout.tsx             # Root Layout giả lập khung điện thoại
+│   └── globals.css            # Tailwind & Theme styles
+├── components/
+│   ├── ConsoleBox.tsx         # Hộp Terminal kiểm tra bản tin Request/Response
+│   ├── DevModal.tsx           # Modal cấu hình kịch bản test
+│   ├── DevFloatingButton.tsx  # Nút tròn nổi kích hoạt Dev Panel
+│   └── LogoutButton.tsx       # Nút đăng xuất
+├── context/
+│   └── MockContext.tsx        # Quản lý state test cases, logs và backend switch
+├── services/
+│   └── telcoApi.ts            # Xử lý gọi API nhà mạng & Browser popup
+└── types/
+    └── index.ts               # Định nghĩa interface CAMARA & Test cases
+```

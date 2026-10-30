@@ -1,65 +1,46 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://unistyl.es/), etc.
+ * BẢNG MÀU GIAO DIỆN (THEME TOKENS)
  */
 
-import '@/global.css';
-
-import { Platform } from 'react-native';
-
 export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-  },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    background: '#0B111E', // Nền chính màu xanh thẫm ngân hàng (chuẩn dark mode Figma)
+    card: '#162032',       // Nền card/panel
+    cardBorder: '#23324A', // Đường viền card
+    text: '#F8FAFC',       // Chữ chính (trắng bạc)
+    textMuted: '#94A3B8',  // Chữ phụ (xám)
+    primary: '#1E60E2',    // Xanh dương chủ đạo ABC Bank
+    primaryLight: '#3B82F6',
+    primaryDark: '#1446A0',
+    success: '#10B981',    // Xanh lá (Xác thực thành công / SIM an toàn)
+    successBg: 'rgba(16, 185, 129, 0.15)',
+    danger: '#EF4444',     // Đỏ (SIM Swap bị khóa / Cảnh báo gian lận)
+    dangerBg: 'rgba(239, 68, 68, 0.15)',
+    warning: '#F59E0B',    // Vàng cam (Fallback OTP)
+    warningBg: 'rgba(245, 158, 11, 0.15)',
+    terminalBg: '#05080F', // Nền hộp Console debug đen
+    terminalText: '#38BDF8',// Chữ trong Console debug
+    inputBg: '#0F172A',
+    inputBorder: '#334155',
   },
-} as const;
-
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
-
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+  light: {
+    background: '#F1F5F9',
+    card: '#FFFFFF',
+    cardBorder: '#E2E8F0',
+    text: '#0F172A',
+    textMuted: '#64748B',
+    primary: '#1E60E2',
+    primaryLight: '#3B82F6',
+    primaryDark: '#1446A0',
+    success: '#059669',
+    successBg: 'rgba(5, 150, 105, 0.12)',
+    danger: '#DC2626',
+    dangerBg: 'rgba(220, 38, 38, 0.12)',
+    warning: '#D97706',
+    warningBg: 'rgba(217, 119, 6, 0.12)',
+    terminalBg: '#0F172A',
+    terminalText: '#38BDF8',
+    inputBg: '#F8FAFC',
+    inputBorder: '#CBD5E1',
   },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
-
-export const Spacing = {
-  half: 2,
-  one: 4,
-  two: 8,
-  three: 16,
-  four: 24,
-  five: 32,
-  six: 64,
-} as const;
-
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
-export const MaxContentWidth = 800;
+};
