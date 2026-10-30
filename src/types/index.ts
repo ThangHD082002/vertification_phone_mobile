@@ -36,3 +36,4 @@ export interface Transaction {
   type: 'IN' | 'OUT';
   icon: string;
 }
+

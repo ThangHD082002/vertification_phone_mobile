@@ -54,3 +54,4 @@ export function LogoutButton({ variant = 'header', label, className = '' }: Logo
     </button>
   );
 }
+

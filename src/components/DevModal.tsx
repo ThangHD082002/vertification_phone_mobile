@@ -104,8 +104,8 @@ export function DevModal({ visible, onClose }: DevModalProps) {
               {/* Real Backend toggle */}
               <div className="flex items-center justify-between py-1 border-t border-[#1E293B] pt-3">
                 <div>
-                  <div className="font-medium text-slate-200">Kết nối Backend thật (:8088):</div>
-                  <div className="text-[11px] text-slate-400">Gọi API Spring Boot thực tế</div>
+                  <div className="font-medium text-slate-200">Chế độ Backend API:</div>
+                  <div className="text-[11px] text-slate-400">Gọi API Telco thực tế (Serverless / Spring Boot)</div>
                 </div>
                 <button
                   type="button"
@@ -121,15 +121,18 @@ export function DevModal({ visible, onClose }: DevModalProps) {
               {useRealBackend && (
                 <div className="space-y-1 bg-[#0F172A] p-2.5 rounded-lg border border-[#1E293B]">
                   <label className="text-[11px] text-slate-400 block font-medium">
-                    Địa chỉ Backend Spring Boot:
+                    Địa chỉ Backend API (Để trống = Dùng Backend Vercel nội bộ cùng domain):
                   </label>
                   <input
                     type="text"
                     value={backendUrl}
                     onChange={(e) => setBackendUrl(e.target.value)}
-                    placeholder="http://localhost:8088/api/v1"
+                    placeholder="Mặc định: /api/v1 (Cùng domain Vercel)"
                     className="w-full bg-[#05080F] border border-[#23324A] rounded px-2.5 py-1.5 text-xs text-slate-200 font-mono focus:outline-none focus:border-blue-500"
                   />
+                  <div className="text-[10px] text-slate-500">
+                    Gợi ý: Để trống để dùng API Next.js trên Vercel, hoặc nhập URL Spring Boot / ngrok ngoài nếu muốn.
+                  </div>
                 </div>
               )}
 
@@ -313,3 +316,4 @@ export function DevModal({ visible, onClose }: DevModalProps) {
     </div>
   );
 }
+

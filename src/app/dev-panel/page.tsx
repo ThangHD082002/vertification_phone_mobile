@@ -52,9 +52,11 @@ export default function DevPanelPage() {
       >
         <div className="flex items-center space-x-2 font-bold mb-1">
           {useRealBackend ? <Server className="w-4 h-4" /> : <Cpu className="w-4 h-4" />}
-          <span>{useRealBackend ? 'Backend Mode: Connected to Spring Boot' : 'Offline Mock Mode (In-Memory Simulator)'}</span>
+          <span>{useRealBackend ? 'Backend Mode: Active (Serverless / Spring Boot)' : 'Offline Mock Mode (In-Memory Simulator)'}</span>
         </div>
-        <div className="text-[11px] text-slate-400 truncate">Endpoint: {backendUrl}</div>
+        <div className="text-[11px] text-slate-400 truncate">
+          Endpoint: {backendUrl ? backendUrl : 'Cùng domain Vercel (/api/v1)'}
+        </div>
       </div>
 
       {/* Test Cases Matrix */}
@@ -161,3 +163,4 @@ export default function DevPanelPage() {
     </div>
   );
 }
+

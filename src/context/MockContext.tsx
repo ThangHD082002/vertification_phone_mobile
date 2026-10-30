@@ -119,13 +119,37 @@ export function MockProvider({ children }: { children: ReactNode }) {
   const [logs, setLogs] = useState<ApiLog[]>([]);
   const [activeTestCase, setActiveTestCase] = useState<TestCase | null>(DEFAULT_TEST_CASES[0]);
 
-  // Cấu hình kết nối Backend Spring Boot
-  const [backendUrl, setBackendUrl] = useState<string>('http://localhost:8088/api/v1');
-  const [useRealBackend, setUseRealBackend] = useState<boolean>(false);
+  // Cấu hình kết nối Backend:
+  // Mặc định useRealBackend = true để gọi thẳng vào các Route Handler /api/v1 trên cùng domain Vercel!
+  const [backendUrl, setBackendUrlState] = useState<string>('');
+  const [useRealBackend, setUseRealBackendState] = useState<boolean>(true);
 
   useEffect(() => {
-    setBackendUrl(getDefaultBackendUrl());
+    if (typeof window !== 'undefined') {
+      const savedBackendUrl = localStorage.getItem('telco_backend_url');
+      if (savedBackendUrl !== null) {
+        setBackendUrlState(savedBackendUrl);
+      }
+      const savedUseReal = localStorage.getItem('telco_use_real_backend');
+      if (savedUseReal !== null) {
+        setUseRealBackendState(savedUseReal === 'true');
+      }
+    }
   }, []);
+
+  const setBackendUrl = (url: string) => {
+    setBackendUrlState(url);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('telco_backend_url', url);
+    }
+  };
+
+  const setUseRealBackend = (useReal: boolean) => {
+    setUseRealBackendState(useReal);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('telco_use_real_backend', String(useReal));
+    }
+  };
 
   const toggleTheme = () => {
     setThemeMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -149,12 +173,12 @@ export function MockProvider({ children }: { children: ReactNode }) {
 
     if (useRealBackend) {
       try {
-        console.log(`[Telco] Starting Number Verification flow to ${backendUrl}...`);
+        console.log(`[Telco] Calling Number Verification via ${backendUrl || 'Next.js Internal Route Handler'}...`);
 
-        // Bước 1 & 2: Lấy authorize URL và mở Web popup ngầm
+        // Bước 1 & 2: Lấy authorize URL và mở Consent popup
         const { code, state } = await executeCarrierAuth(backendUrl, redirectUri);
 
-        // Bước 3: Gửi verify request về Backend Spring Boot
+        // Bước 3: Gửi verify request về Backend (Route Handler hoặc Spring Boot)
         const { data, log } = await verifyNumberWithBackend(backendUrl, phone, code, redirectUri, state);
 
         setLogs((prev) => [log, ...prev]);
@@ -164,28 +188,29 @@ export function MockProvider({ children }: { children: ReactNode }) {
           log,
         };
       } catch (err: any) {
-        console.warn(`[Telco] Backend call failed (${err?.message}), falling back to local simulation...`);
+        console.warn(`[Telco] Backend call failed (${err?.message}), recording error log...`);
         const failLog: ApiLog = {
           id: Math.random().toString(36).substring(7),
           timestamp: new Date().toISOString(),
           method: 'POST',
           endpoint: '/number-verification/verify',
-          url: `${backendUrl}/number-verification/verify`,
+          url: `${backendUrl || ''}/api/v1/number-verification/verify`,
           requestHeaders: { 'Content-Type': 'application/json' },
           requestPayload: { phoneNumber: phone.replace(/\s+/g, '') },
           responsePayload: {
-            error: 'CONNECTION_ERROR',
-            message: err?.message || 'Không thể kết nối đến máy chủ Backend',
+            error: 'CARRIER_AUTH_ERROR',
+            message: err?.message || 'Lỗi trong quá trình xác thực với nhà mạng',
           },
-          statusCode: 503,
+          statusCode: 400,
           durationMs: Date.now() - startTime,
-          statusText: '503 Service Unavailable',
+          statusText: '400 Bad Request',
         };
         setLogs((prev) => [failLog, ...prev]);
+        return { success: false, data: failLog.responsePayload, log: failLog };
       }
     }
 
-    // Luồng Mock Simulator (Phục vụ demo trực tiếp trên Vercel & Offline)
+    // Luồng Mock Simulator (chỉ dùng khi người dùng tắt useRealBackend trong Dev Panel)
     await new Promise((resolve) => setTimeout(resolve, 800));
     const isSuccess = verifyScenario === 'SUCCESS';
     const isTimeout = verifyScenario === 'TIMEOUT';
@@ -218,7 +243,7 @@ export function MockProvider({ children }: { children: ReactNode }) {
       timestamp: nowIso,
       method: 'POST',
       endpoint: '/number-verification/verify',
-      url: `${backendUrl}/number-verification/verify`,
+      url: `${backendUrl || ''}/api/v1/number-verification/verify`,
       requestHeaders: {
         'Content-Type': 'application/json',
       },
@@ -246,7 +271,7 @@ export function MockProvider({ children }: { children: ReactNode }) {
 
     if (useRealBackend) {
       try {
-        console.log(`[Telco] Calling SIM Swap check to ${backendUrl}...`);
+        console.log(`[Telco] Calling SIM Swap check via ${backendUrl || 'Next.js Internal Route Handler'}...`);
         const { data, log } = await checkSimSwapWithBackend(backendUrl, phone, maxAge);
         setLogs((prev) => [log, ...prev]);
         return {
@@ -255,11 +280,11 @@ export function MockProvider({ children }: { children: ReactNode }) {
           log,
         };
       } catch (err: any) {
-        console.warn(`[Telco] Backend SIM swap check failed (${err?.message}), falling back to local simulation...`);
+        console.warn(`[Telco] Backend SIM swap check failed (${err?.message}), recording error log...`);
       }
     }
 
-    // Luồng Mock Simulator (Phục vụ demo trực tiếp trên Vercel & Offline)
+    // Luồng Mock Simulator Fallback
     await new Promise((resolve) => setTimeout(resolve, 800));
     const isSwappedRecent = simSwapScenario === 'SWAPPED_RECENT';
     const isError = simSwapScenario === 'ERROR';
@@ -294,7 +319,7 @@ export function MockProvider({ children }: { children: ReactNode }) {
       timestamp: now.toISOString(),
       method: 'POST',
       endpoint: '/sim-swap/check',
-      url: `${backendUrl}/sim-swap/check`,
+      url: `${backendUrl || ''}/api/v1/sim-swap/check`,
       requestHeaders: {
         'Content-Type': 'application/json',
       },
