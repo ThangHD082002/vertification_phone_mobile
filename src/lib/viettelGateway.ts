@@ -31,9 +31,13 @@ p5xLGV+jogZohocuQ3kI0w==
 
 export function getPrivateKey(): string {
   let key = process.env.VIETTEL_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
-  if (key.includes('\\n')) {
-    key = key.replace(/\\n/g, '\n');
+  if (!key) return DEFAULT_PRIVATE_KEY.trim();
+  key = key.trim();
+  if ((key.startsWith('"') && key.endsWith('"')) || (key.startsWith("'") && key.endsWith("'"))) {
+    key = key.slice(1, -1);
   }
+  // Chuẩn hóa mọi dạng xuống dòng (literal \n, \r\n, ...)
+  key = key.replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n').replace(/\r\n/g, '\n');
   return key.trim();
 }
 

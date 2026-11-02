@@ -26,10 +26,17 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Error generating authorize URL:', error);
+    const rawEnv = process.env.VIETTEL_PRIVATE_KEY;
     return NextResponse.json(
       {
         error: 'AUTHORIZE_URL_ERROR',
         message: error?.message || 'Không thể tạo URL xác thực Viettel',
+        debug: {
+          hasEnv: Boolean(rawEnv),
+          envLen: rawEnv ? rawEnv.length : 0,
+          preview: rawEnv ? rawEnv.substring(0, 30) : null,
+          errorStack: error?.stack,
+        },
       },
       { status: 500 }
     );
