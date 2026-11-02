@@ -1,16 +1,6 @@
 import crypto from 'crypto';
 
-export const VIETTEL_CONFIG = {
-  clientId: process.env.VIETTEL_CLIENT_ID || 'gbQI82YM3SBSjHJGZejByjNB_FZdFzy8s4OlywuZ_MA',
-  kid: process.env.VIETTEL_KID || ' vtt-api-gw', // LƯU Ý: Viettel lưu có dấu cách đầu
-  authServerUrl: 'https://developers-access.viettel.vn/security-domain',
-  tokenUrl: 'https://developers-access.viettel.vn/security-domain/oauth/token',
-  authorizeUrl: 'https://developers-access.viettel.vn/security-domain/oauth/authorize',
-  numberVerifyApiUrl: 'https://developers-api.viettel.vn/afp/number-verification/v1',
-  simSwapApiUrl: 'https://developers-api.viettel.vn/afp/sim-swap/v1',
-  scopeNumberVerify: 'number-verification:verify number-verification:device-phone-number',
-  scopeSimSwap: 'sim-swap sim-swap:check sim-swap:retrieve-date',
-  privateKeyPem: process.env.VIETTEL_PRIVATE_KEY || `-----BEGIN PRIVATE KEY-----
+const DEFAULT_PRIVATE_KEY = `-----BEGIN PRIVATE KEY-----
 MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC+rkKRBkywlBuL
 PTpJcMU+XbXQqRaDpouwlzaVOPFwAGM1ra7MnwP4prboLmwuLGcEH2Q3ys7SDPZg
 UV8nK0QeIawgUi5G98lf+X/q1gxZAkwouyfFXR99PqbuO6fSRMOUaKAIj3cAr6nX
@@ -37,7 +27,29 @@ RZWCIrATT6doYMLtSAMKm/eIICb3MjgRDijDhrfK/w6lLJxRHTT2tftj9xEN8FtP
 Ue/O9x2s8w0flTPn304Ef4RMuiiEJZ/AiJ7s1HK5CsLg2AL399Wv0BXjfSfoPqy/
 cxfBDAa0OOJq9EPs9MdS7lg4I1tm0pJWFrKUXp7a8KLsWY9Hbe5tmacgSNj+upU0
 p5xLGV+jogZohocuQ3kI0w==
------END PRIVATE KEY-----`,
+-----END PRIVATE KEY-----`;
+
+export function getPrivateKey(): string {
+  let key = process.env.VIETTEL_PRIVATE_KEY || DEFAULT_PRIVATE_KEY;
+  if (key.includes('\\n')) {
+    key = key.replace(/\\n/g, '\n');
+  }
+  return key.trim();
+}
+
+export const VIETTEL_CONFIG = {
+  clientId: process.env.VIETTEL_CLIENT_ID || 'gbQI82YM3SBSjHJGZejByjNB_FZdFzy8s4OlywuZ_MA',
+  kid: process.env.VIETTEL_KID || ' vtt-api-gw', // LƯU Ý: Viettel lưu có dấu cách đầu
+  authServerUrl: 'https://developers-access.viettel.vn/security-domain',
+  tokenUrl: 'https://developers-access.viettel.vn/security-domain/oauth/token',
+  authorizeUrl: 'https://developers-access.viettel.vn/security-domain/oauth/authorize',
+  numberVerifyApiUrl: 'https://developers-api.viettel.vn/afp/number-verification/v1',
+  simSwapApiUrl: 'https://developers-api.viettel.vn/afp/sim-swap/v1',
+  scopeNumberVerify: 'number-verification:verify number-verification:device-phone-number',
+  scopeSimSwap: 'sim-swap sim-swap:check sim-swap:retrieve-date',
+  get privateKeyPem() {
+    return getPrivateKey();
+  },
 };
 
 /**
