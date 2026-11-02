@@ -48,7 +48,7 @@ export const VIETTEL_CONFIG = {
   tokenUrl: 'https://developers-access.viettel.vn/security-domain/oauth/token',
   authorizeUrl: 'https://developers-access.viettel.vn/security-domain/oauth/authorize',
   numberVerifyApiUrl: 'https://developers-api.viettel.vn/afp/number-verification/v1',
-  simSwapApiUrl: 'https://developers-api.viettel.vn/afp/sim-swap/v1',
+  simSwapApiUrl: 'https://developers-api.viettel.vn/sim-swap/v1',
   scopeNumberVerify: 'number-verification:verify number-verification:device-phone-number',
   scopeSimSwap: 'sim-swap sim-swap:check sim-swap:retrieve-date',
   get privateKeyPem() {
@@ -331,13 +331,8 @@ export async function checkSimSwapWithViettel(
   }
 
   if (!res.ok) {
-    // Nếu Gateway Viettel ở môi trường sandbox trả 401/404, fallback an toàn với log chi tiết
-    return {
-      swapped: false,
-      riskLevel: 'SAFE',
-      message: `SIM an toàn (Kiểm tra Gateway Viettel: HTTP ${res.status})`,
-      raw: data,
-    };
+    const errorMsg = data.message || data.error_description || `Viettel SIM Swap API error: HTTP ${res.status}`;
+    throw new Error(errorMsg);
   }
 
   const swapped = Boolean(data.swapped);
@@ -346,8 +341,8 @@ export async function checkSimSwapWithViettel(
     latestSimChange: data.latestSimChange,
     riskLevel: swapped ? 'CRITICAL' : 'SAFE',
     message: swapped
-      ? 'CẢNH BÁO: SIM vừa bị thay đổi gần đây! Đã kích hoạt cơ chế bảo vệ giao dịch.'
-      : 'SIM an toàn, không phát hiện hành vi tráo SIM gần đây.',
+      ? 'CẢNH BÁO: Viettel phát hiện SIM vừa bị thay đổi gần đây! Đã kích hoạt cơ chế bảo vệ giao dịch.'
+      : 'Viettel xác nhận: SIM an toàn, không có lịch sử tráo SIM trong khoảng thời gian kiểm tra.',
     raw: data,
   };
 }

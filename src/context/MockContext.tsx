@@ -209,132 +209,47 @@ export function MockProvider({ children }: { children: ReactNode }) {
         return { success: false, data: failLog.responsePayload, log: failLog };
       }
     }
-
-    // Luồng Mock Simulator (chỉ dùng khi người dùng tắt useRealBackend trong Dev Panel)
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    const isSuccess = verifyScenario === 'SUCCESS';
-    const isTimeout = verifyScenario === 'TIMEOUT';
-    const durationMs = Date.now() - startTime;
-    const nowIso = new Date().toISOString();
-
-    const responsePayload = isSuccess
-      ? {
-          devicePhoneNumberVerified: true,
-          match: true,
-          message: 'Xác thực số điện thoại thuê bao thành công qua mạng di động Viettel (Mock Local)',
-          operator: 'Viettel',
-          verifiedAt: nowIso,
-        }
-      : isTimeout
-      ? {
-          code: 'GATEWAY_TIMEOUT',
-          message: 'Telco Network API response timed out after 5000ms',
-        }
-      : {
-          devicePhoneNumberVerified: false,
-          match: false,
-          message: 'Số điện thoại không khớp với SIM thiết bị (Fallback SMS OTP)',
-        };
-
-    const statusCode = isSuccess ? 200 : isTimeout ? 504 : 400;
-
-    const log: ApiLog = {
-      id: Math.random().toString(36).substring(7),
-      timestamp: nowIso,
-      method: 'POST',
-      endpoint: '/number-verification/verify',
-      url: `${backendUrl || ''}/api/v1/number-verification/verify`,
-      requestHeaders: {
-        'Content-Type': 'application/json',
-      },
-      requestPayload: {
-        phoneNumber: phone.replace(/\s+/g, ''),
-      },
-      responsePayload,
-      statusCode,
-      durationMs,
-      statusText: isSuccess ? '200 OK' : isTimeout ? '504 Gateway Timeout' : '400 Bad Request',
-    };
-
-    setLogs((prev) => [log, ...prev]);
-    return { success: isSuccess, data: responsePayload, log };
+    return { success: false, data: null, log: {} as any };
   };
 
   /**
-   * THỰC HIỆN KIỂM TRA ĐỔI SIM (SIM SWAP CHECK)
+   * THỰC HIỆN KIỂM TRA ĐỔI SIM THẬT QUA VIETTEL OPEN GATEWAY (SIM SWAP CHECK)
    */
   const runSimSwapCheck = async (
     phone: string,
     maxAge: number
   ): Promise<{ swapped: boolean; latestSimChange?: string; log: ApiLog }> => {
     const startTime = Date.now();
-
-    if (useRealBackend) {
-      try {
-        console.log(`[Telco] Calling SIM Swap check via ${backendUrl || 'Next.js Internal Route Handler'}...`);
-        const { data, log } = await checkSimSwapWithBackend(backendUrl, phone, maxAge);
-        setLogs((prev) => [log, ...prev]);
-        return {
-          swapped: data.swapped === true,
-          latestSimChange: data.latestSimChange,
-          log,
-        };
-      } catch (err: any) {
-        console.warn(`[Telco] Backend SIM swap check failed (${err?.message}), recording error log...`);
-      }
+    try {
+      console.log(`[Telco] Kiểm tra SIM Swap thật với Viettel: phone=${phone}, maxAge=${maxAge}h`);
+      const { data, log } = await checkSimSwapWithBackend(backendUrl, phone, maxAge);
+      setLogs((prev) => [log, ...prev]);
+      return {
+        swapped: data.swapped === true,
+        latestSimChange: data.latestSimChange,
+        log,
+      };
+    } catch (err: any) {
+      console.error(`[Telco] Lỗi gọi Viettel SIM Swap: ${err?.message}`);
+      const failLog: ApiLog = {
+        id: Math.random().toString(36).substring(7),
+        timestamp: new Date().toISOString(),
+        method: 'POST',
+        endpoint: '/sim-swap/check',
+        url: `${backendUrl || ''}/api/v1/sim-swap/check`,
+        requestHeaders: { 'Content-Type': 'application/json' },
+        requestPayload: { phoneNumber: phone.replace(/\s+/g, ''), maxAge },
+        responsePayload: {
+          error: 'SIM_SWAP_ERROR',
+          message: err?.message || 'Không thể kết nối máy chủ SIM Swap Viettel',
+        },
+        statusCode: 400,
+        durationMs: Date.now() - startTime,
+        statusText: '400 Bad Request',
+      };
+      setLogs((prev) => [failLog, ...prev]);
+      return { swapped: false, log: failLog };
     }
-
-    // Luồng Mock Simulator Fallback
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    const isSwappedRecent = simSwapScenario === 'SWAPPED_RECENT';
-    const isError = simSwapScenario === 'ERROR';
-
-    const now = new Date();
-    let latestSimDate: string | undefined;
-    if (isSwappedRecent) {
-      latestSimDate = '2026-10-25T14:27:08+07:00';
-    } else if (simSwapScenario === 'SWAPPED_OLD') {
-      latestSimDate = new Date(now.getTime() - 50 * 3600 * 1000).toISOString();
-    } else {
-      latestSimDate = new Date(now.getTime() - 400 * 24 * 3600 * 1000).toISOString();
-    }
-
-    const swapped = isSwappedRecent;
-    const statusCode = isError ? 500 : 200;
-
-    const responsePayload = isError
-      ? {
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'HLR/UDM query failure from Telco core',
-        }
-      : {
-          swapped,
-          latestSimChange: latestSimDate,
-          riskLevel: swapped ? 'CRITICAL' : 'SAFE',
-          purpose: 'dpv:FraudPreventionAndDetection',
-        };
-
-    const log: ApiLog = {
-      id: Math.random().toString(36).substring(7),
-      timestamp: now.toISOString(),
-      method: 'POST',
-      endpoint: '/sim-swap/check',
-      url: `${backendUrl || ''}/api/v1/sim-swap/check`,
-      requestHeaders: {
-        'Content-Type': 'application/json',
-      },
-      requestPayload: {
-        phoneNumber: phone.replace(/\s+/g, ''),
-        maxAge: maxAge,
-      },
-      responsePayload,
-      statusCode,
-      durationMs: Date.now() - startTime,
-      statusText: isError ? '500 Internal Error' : '200 OK',
-    };
-
-    setLogs((prev) => [log, ...prev]);
-    return { swapped, latestSimChange: latestSimDate, log };
   };
 
   return (

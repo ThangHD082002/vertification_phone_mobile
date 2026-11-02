@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { MockProvider } from '@/context/MockContext';
-import { DevFloatingButton } from '@/components/DevFloatingButton';
 
 export const metadata: Metadata = {
   title: 'ABC Bank - CAMARA Network API & SIM Swap Demo',
@@ -29,7 +28,6 @@ export default function RootLayout({
             {/* Mobile Viewport Container */}
             <main className="w-full max-w-[430px] min-h-screen bg-[#0B111E] sm:border-x sm:border-[#1E293B] shadow-2xl relative flex flex-col overflow-x-hidden">
               {children}
-              <DevFloatingButton />
             </main>
           </div>
         </MockProvider>

@@ -1,21 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Phone, Radio, ArrowRight, SlidersHorizontal, List } from 'lucide-react';
-import { useMock, DEFAULT_TEST_CASES } from '@/context/MockContext';
-import { DevModal } from '@/components/DevModal';
+import { Phone, Radio, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useMock } from '@/context/MockContext';
 
 export default function LoginPage() {
   const router = useRouter();
   const {
     phoneNumber,
     setPhoneNumber,
-    activeTestCase,
-    applyTestCase,
   } = useMock();
-
-  const [devModalVisible, setDevModalVisible] = useState(false);
 
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,19 +19,15 @@ export default function LoginPage() {
 
   return (
     <div className="flex-1 flex flex-col p-5 pb-20">
-      {/* Top bar with Logo & Dev Button */}
+      {/* Top bar with Logo */}
       <div className="flex items-center justify-between mb-4 pt-2">
         <div className="w-10 h-10 rounded-xl bg-[#1E60E2] flex items-center justify-center font-bold text-white text-xl shadow-md">
           A
         </div>
-        <button
-          type="button"
-          onClick={() => setDevModalVisible(true)}
-          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#162032] border border-[#23324A] text-blue-400 hover:text-blue-300 text-xs font-semibold transition"
-        >
-          <SlidersHorizontal className="w-3.5 h-3.5" />
-          <span>{activeTestCase ? activeTestCase.code : 'Test Case'}</span>
-        </button>
+        <div className="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <span>Viettel Open Gateway Live</span>
+        </div>
       </div>
 
       {/* Brand Title */}
@@ -105,47 +96,16 @@ export default function LoginPage() {
         </form>
       </div>
 
-      {/* Quick Test Presets */}
-      <div className="mt-6">
-        <h2 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">
-          Chọn nhanh kịch bản test (Figma presets):
-        </h2>
-        <div className="grid grid-cols-2 gap-2">
-          {DEFAULT_TEST_CASES.slice(0, 4).map((tc) => {
-            const isSelected = activeTestCase?.id === tc.id;
-            return (
-              <button
-                key={tc.id}
-                type="button"
-                onClick={() => applyTestCase(tc)}
-                className={`p-2.5 rounded-xl border text-left transition ${
-                  isSelected
-                    ? 'bg-blue-600/20 border-blue-400 shadow-md'
-                    : 'bg-[#162032] border-[#23324A] hover:border-slate-500'
-                }`}
-              >
-                <div className={`text-[10px] font-bold ${isSelected ? 'text-blue-400' : 'text-slate-400'}`}>
-                  {tc.code}: {tc.phoneNumber}
-                </div>
-                <div className="text-xs font-semibold text-slate-200 truncate mt-0.5">
-                  {tc.title.split('(')[0].trim()}
-                </div>
-              </button>
-            );
-          })}
+      {/* Security Info Card */}
+      <div className="mt-6 bg-[#162032] border border-[#23324A] rounded-2xl p-4 text-xs text-slate-300 space-y-2">
+        <div className="font-semibold text-slate-100 flex items-center space-x-1.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>Xác thực viễn thông trực tiếp (Live Viettel Gateway)</span>
         </div>
-
-        <button
-          type="button"
-          onClick={() => setDevModalVisible(true)}
-          className="w-full flex items-center justify-center space-x-1.5 mt-3 py-2 text-blue-400 hover:text-blue-300 text-xs font-semibold transition"
-        >
-          <List className="w-4 h-4" />
-          <span>Xem đầy đủ bảng ma trận 6 test cases & cấu hình</span>
-        </button>
+        <p className="text-[11px] text-slate-400 leading-relaxed">
+          Ứng dụng kết nối trực tiếp cổng <strong>Viettel Open Gateway</strong>. Khi bấm Tiếp tục, bạn sẽ được chuyển sang trang ủy quyền chính thức của Viettel để đối soát số thuê bao của thẻ SIM trên thiết bị (không dùng mã OTP qua tin nhắn).
+        </p>
       </div>
-
-      <DevModal visible={devModalVisible} onClose={() => setDevModalVisible(false)} />
     </div>
   );
 }
