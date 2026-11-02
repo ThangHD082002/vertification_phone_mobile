@@ -3,8 +3,8 @@ import './globals.css';
 import { MockProvider } from '@/context/MockContext';
 
 export const metadata: Metadata = {
-  title: 'ABC Bank - CAMARA Network API & SIM Swap Demo',
-  description: 'Demo ứng dụng Mobile Banking kiểm thử CAMARA Number Verification và SIM Swap API',
+  title: 'Viettel Money - Xác thực & Bảo vệ giao dịch Viettel Open Gateway',
+  description: 'Trải nghiệm ngân hàng số Viettel Money bảo vệ bởi Viettel Open Gateway (Number Verification & SIM Swap)',
 };
 
 export const viewport: Viewport = {
@@ -12,7 +12,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#0B111E',
+  themeColor: '#EE0033',
 };
 
 export default function RootLayout({
@@ -22,11 +22,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi" className="dark">
-      <body className="bg-[#05080F] text-slate-100 antialiased font-sans">
+      <body className="bg-[#06080D] text-slate-100 antialiased font-sans">
         <MockProvider>
-          <div className="min-h-screen bg-[#05080F] flex justify-center">
+          <div className="min-h-screen bg-[#06080D] flex justify-center">
             {/* Mobile Viewport Container */}
-            <main className="w-full max-w-[430px] min-h-screen bg-[#0B111E] sm:border-x sm:border-[#1E293B] shadow-2xl relative flex flex-col overflow-x-hidden">
+            <main className="w-full max-w-[430px] min-h-screen bg-[#0D1017] sm:border-x sm:border-[#1F2430] shadow-2xl relative flex flex-col overflow-x-hidden">
               {children}
             </main>
           </div>

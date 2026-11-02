@@ -17,20 +17,20 @@ export const DEFAULT_TEST_CASES: TestCase[] = [
   {
     id: 'tc-01',
     code: 'TC-01',
-    title: '4G Viettel On-Net (Chuẩn Happy Flow)',
+    title: '4G Viettel On-Net (Happy Flow)',
     description: 'Thiết bị đang dùng 4G Viettel, định danh IP tự động, đăng nhập không cần OTP. SIM an toàn.',
-    phoneNumber: '098 765 4321',
+    phoneNumber: '0983 784 276',
     verifyScenario: 'SUCCESS',
     simSwapScenario: 'SAFE',
-    expectedResult: 'Xác thực thành công tức thì -> Chuyển tiền 50M thành công.',
+    expectedResult: 'Xác thực thành công tức thì -> Chuyển tiền an toàn.',
     badge: 'NORMAL',
   },
   {
     id: 'tc-02',
     code: 'TC-02',
-    title: 'Wifi / Mạng khác (Fallback sang SMS OTP)',
+    title: 'Wifi / Ngoại mạng (Fallback sang SMS OTP)',
     description: 'Thiết bị đang kết nối Wifi hoặc mạng ngoại tuyến, không nhận diện được IP 4G ngầm.',
-    phoneNumber: '098 111 2222',
+    phoneNumber: '0983 784 276',
     verifyScenario: 'FAIL',
     simSwapScenario: 'SAFE',
     expectedResult: 'Báo lỗi xác thực ngầm -> Hiển thị nút fallback nhập mã SMS OTP.',
@@ -39,9 +39,9 @@ export const DEFAULT_TEST_CASES: TestCase[] = [
   {
     id: 'tc-03',
     code: 'TC-03',
-    title: 'Chuyển tiền an toàn (SIM ổn định > 1 năm)',
+    title: 'Chuyển tiền an toàn (SIM ổn định)',
     description: 'Số thuê bao hoạt động bình thường, không thay đổi thẻ SIM trong nhiều năm.',
-    phoneNumber: '098 888 8888',
+    phoneNumber: '0983 784 276',
     verifyScenario: 'SUCCESS',
     simSwapScenario: 'SAFE',
     expectedResult: 'SIM an toàn (swapped = false) -> Giao dịch hoàn tất.',
@@ -50,9 +50,9 @@ export const DEFAULT_TEST_CASES: TestCase[] = [
   {
     id: 'tc-04',
     code: 'TC-04',
-    title: 'Phát hiện tráo SIM (Đổi SIM 2 giờ trước)',
-    description: 'Kẻ gian vừa đổi phôi SIM / làm lại SIM 2 giờ trước nhằm chiếm đoạt tài khoản.',
-    phoneNumber: '036 868 2926',
+    title: 'Phát hiện tráo SIM (Đổi SIM gần đây)',
+    description: 'Kẻ gian vừa đổi phôi SIM / làm lại SIM nhằm chiếm đoạt tài khoản.',
+    phoneNumber: '0983 784 276',
     verifyScenario: 'SUCCESS',
     simSwapScenario: 'SWAPPED_RECENT',
     expectedResult: 'Cảnh báo gian lận (swapped = true) -> Khóa giao dịch, bắt xác thực FaceID eKYC.',
@@ -61,24 +61,13 @@ export const DEFAULT_TEST_CASES: TestCase[] = [
   {
     id: 'tc-05',
     code: 'TC-05',
-    title: 'Biên an toàn (Đổi SIM 50 giờ trước, maxAge = 48h)',
-    description: 'SIM đổi cách đây 50 giờ, vượt qua mốc quét rủi ro 48 giờ của ngân hàng.',
-    phoneNumber: '097 555 6666',
+    title: 'Biên an toàn (maxAge = 48h)',
+    description: 'SIM đổi ngoài khoảng thời gian giám sát an toàn của Viettel Open Gateway.',
+    phoneNumber: '0983 784 276',
     verifyScenario: 'SUCCESS',
     simSwapScenario: 'SWAPPED_OLD',
     expectedResult: 'Không coi là rủi ro (swapped = false) -> Cho phép giao dịch.',
     badge: 'NORMAL',
-  },
-  {
-    id: 'tc-06',
-    code: 'TC-06',
-    title: 'Lỗi hạ tầng Telco (Network API Timeout)',
-    description: 'Cổng kết nối nhà mạng gặp sự cố tạm thời hoặc timeout phản hồi.',
-    phoneNumber: '090 999 0000',
-    verifyScenario: 'TIMEOUT',
-    simSwapScenario: 'ERROR',
-    expectedResult: 'Báo lỗi hệ thống -> Yêu cầu thử lại hoặc xử lý an toàn.',
-    badge: 'FALLBACK',
   },
 ];
 
@@ -110,11 +99,11 @@ interface MockContextType {
 const MockContext = createContext<MockContextType | undefined>(undefined);
 
 export function MockProvider({ children }: { children: ReactNode }) {
-  const [phoneNumber, setPhoneNumber] = useState('098 765 4321');
+  const [phoneNumber, setPhoneNumber] = useState('0983 784 276');
   const [verifyScenario, setVerifyScenario] = useState<VerificationScenario>('SUCCESS');
   const [simSwapScenario, setSimSwapScenario] = useState<SimSwapScenario>('SWAPPED_RECENT');
   const [maxAgeHours, setMaxAgeHours] = useState(48);
-  const [developerMode, setDeveloperMode] = useState(true);
+  const [developerMode, setDeveloperMode] = useState(false);
   const [themeMode, setThemeMode] = useState<'dark' | 'light'>('dark');
   const [logs, setLogs] = useState<ApiLog[]>([]);
   const [activeTestCase, setActiveTestCase] = useState<TestCase | null>(DEFAULT_TEST_CASES[0]);

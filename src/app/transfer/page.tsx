@@ -2,16 +2,18 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CreditCard, AlertCircle, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, CreditCard, ShieldCheck, Lock } from 'lucide-react';
+import { useMock } from '@/context/MockContext';
 
 export default function TransferPage() {
   const router = useRouter();
+  const { phoneNumber } = useMock();
 
-  const [recipientBank, setRecipientBank] = useState('Ngân hàng XYZ');
-  const [recipientAccount, setRecipientAccount] = useState('9876543210');
-  const [recipientName, setRecipientName] = useState('NGUYEN VAN B');
-  const [amount, setAmount] = useState('50.000.000');
-  const [message, setMessage] = useState('Thanh toan hop dong 10/2026');
+  const [recipientBank, setRecipientBank] = useState('MB - Ngân hàng Quân Đội');
+  const [recipientAccount, setRecipientAccount] = useState('0988 888 999');
+  const [recipientName, setRecipientName] = useState('NGUYỄN THỊ MAI');
+  const [amount, setAmount] = useState('20.000.000');
+  const [message, setMessage] = useState('Chuyen tien hop dong');
 
   const handleConfirmTransfer = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,61 +23,56 @@ export default function TransferPage() {
   return (
     <div className="flex-1 flex flex-col p-5 pb-16">
       {/* Nav Header */}
-      <div className="flex items-center justify-between py-2 border-b border-[#1E293B] -mx-5 px-5 mb-4">
+      <div className="flex items-center justify-between py-2 border-b border-[#1E2536] -mx-5 px-5 mb-4">
         <button
           type="button"
           onClick={() => router.back()}
-          className="w-9 h-9 rounded-full bg-[#162032] border border-[#23324A] flex items-center justify-center text-slate-300 hover:text-white transition"
+          className="w-9 h-9 rounded-full bg-[#141824] border border-[#232A3B] flex items-center justify-center text-slate-300 hover:text-white transition"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-base font-bold text-slate-100">Chuyển tiền</h1>
+        <h1 className="text-base font-bold text-white">Chuyển tiền nhanh</h1>
         <div className="w-9" />
       </div>
 
-      {/* Flow Badge */}
-      <div className="inline-flex self-start px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-[11px] font-bold mb-4">
-        FLOW B2 • GIAO DỊCH GIÁ TRỊ LỚN
-      </div>
-
       <form onSubmit={handleConfirmTransfer} className="space-y-4">
-        {/* Nguồn tiền */}
-        <div className="bg-[#162032] border border-[#23324A] rounded-2xl p-4 text-xs">
-          <span className="text-slate-400 block mb-2 font-medium">Từ tài khoản nguồn:</span>
+        {/* Nguồn tiền Viettel Money */}
+        <div className="bg-[#141824] border border-[#232A3B] rounded-2xl p-4 text-xs">
+          <span className="text-slate-400 block mb-2 font-medium">Nguồn tiền trích nợ:</span>
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-full bg-sky-500/15 text-sky-400 flex items-center justify-center shrink-0">
-              <CreditCard className="w-4 h-4" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#EE0033] to-[#99001D] text-white flex items-center justify-center shrink-0 shadow-md">
+              <CreditCard className="w-5 h-5" />
             </div>
             <div>
-              <div className="font-mono font-bold text-slate-100 text-sm">
-                1903 1481 0175 4241
+              <div className="font-mono font-bold text-white text-sm">
+                Viettel Money ({phoneNumber})
               </div>
               <div className="text-slate-400 text-[11px] mt-0.5">
-                Khả dụng: <strong className="text-emerald-400 font-bold">182.450.000 đ</strong>
+                Khả dụng: <strong className="text-emerald-400 font-bold">52.450.000 đ</strong>
               </div>
             </div>
           </div>
         </div>
 
         {/* Thông tin người nhận */}
-        <div className="bg-[#162032] border border-[#23324A] rounded-2xl p-4 space-y-3.5 text-xs">
+        <div className="bg-[#141824] border border-[#232A3B] rounded-2xl p-4 space-y-3.5 text-xs">
           <div>
             <label className="text-slate-400 block mb-1 font-medium">Ngân hàng thụ hưởng:</label>
             <input
               type="text"
               value={recipientBank}
               onChange={(e) => setRecipientBank(e.target.value)}
-              className="w-full bg-[#0F172A] border border-[#334155] rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-blue-500 text-xs font-semibold"
+              className="w-full bg-[#0B0E17] border border-[#2B354B] rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-[#EE0033] text-xs font-semibold"
             />
           </div>
 
           <div>
-            <label className="text-slate-400 block mb-1 font-medium">Số tài khoản người nhận:</label>
+            <label className="text-slate-400 block mb-1 font-medium">Số tài khoản / Số điện thoại:</label>
             <input
               type="text"
               value={recipientAccount}
               onChange={(e) => setRecipientAccount(e.target.value)}
-              className="w-full bg-[#0F172A] border border-[#334155] rounded-xl px-3 py-2 text-slate-100 font-mono text-sm focus:outline-none focus:border-blue-500"
+              className="w-full bg-[#0B0E17] border border-[#2B354B] rounded-xl px-3 py-2.5 text-white font-mono text-sm focus:outline-none focus:border-[#EE0033]"
             />
           </div>
 
@@ -85,73 +82,55 @@ export default function TransferPage() {
               type="text"
               value={recipientName}
               onChange={(e) => setRecipientName(e.target.value)}
-              className="w-full bg-[#0F172A] border border-[#334155] rounded-xl px-3 py-2 text-slate-100 font-bold uppercase focus:outline-none focus:border-blue-500"
+              className="w-full bg-[#0B0E17] border border-[#2B354B] rounded-xl px-3 py-2.5 text-white font-bold uppercase focus:outline-none focus:border-[#EE0033]"
             />
           </div>
 
           {/* Số tiền */}
           <div>
             <label className="text-slate-400 block mb-1 font-medium">Số tiền chuyển (VND):</label>
-            <div className="flex items-center bg-[#0F172A] border-2 border-blue-500 rounded-xl px-3 py-2 mb-2">
+            <div className="flex items-center bg-[#0B0E17] border-2 border-[#EE0033] rounded-xl px-3.5 py-2.5 mb-2">
               <input
                 type="text"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full bg-transparent text-slate-100 font-black text-xl focus:outline-none"
+                className="w-full bg-transparent text-white font-black text-xl focus:outline-none tracking-tight"
               />
-              <span className="text-blue-400 font-bold ml-2">VND</span>
+              <span className="text-xs font-bold text-slate-400 ml-2">VND</span>
             </div>
-
-            {/* Quick Amount Chips */}
-            <div className="flex space-x-2">
-              {['10.000.000', '20.000.000', '50.000.000'].map((val) => (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={() => setAmount(val)}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold transition ${
-                    amount === val
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-[#1E293B] text-slate-300 hover:bg-slate-700'
-                  }`}
-                >
-                  {val}
-                </button>
-              ))}
+            <div className="text-[11px] text-slate-400">
+              Phí chuyển tiền: <strong className="text-emerald-400">Miễn phí 100%</strong>
             </div>
           </div>
 
-          {/* Lời nhắn */}
           <div>
-            <label className="text-slate-400 block mb-1 font-medium">Nội dung chuyển tiền:</label>
+            <label className="text-slate-400 block mb-1 font-medium">Lời nhắn:</label>
             <input
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="w-full bg-[#0F172A] border border-[#334155] rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-blue-500"
+              className="w-full bg-[#0B0E17] border border-[#2B354B] rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-[#EE0033]"
             />
           </div>
         </div>
 
-        {/* Cảnh báo SIM Swap */}
-        <div className="flex items-start space-x-2.5 bg-rose-500/10 border border-rose-500/30 rounded-2xl p-4 text-xs">
-          <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-          <div className="text-slate-300 leading-relaxed">
-            <h2 className="font-bold text-rose-400 mb-0.5">Chính sách an toàn bảo vệ tài khoản:</h2>
-            Giao dịch trên 10 triệu sẽ kích hoạt kiểm tra <strong className="text-rose-400 font-bold">SIM Swap tự động</strong> với nhà mạng để phòng chống hành vi chiếm đoạt SIM nhận mã OTP.
-          </div>
+        {/* Security Info Card */}
+        <div className="flex items-start space-x-2.5 bg-[#EE0033]/10 border border-[#EE0033]/25 rounded-2xl p-3.5 text-xs text-slate-300">
+          <Lock className="w-4 h-4 text-[#EE0033] mt-0.5 shrink-0" />
+          <p className="text-[11px] leading-relaxed">
+            Giao dịch chuyển tiền được kiểm soát an toàn bởi <strong>Viettel Open Gateway SIM Swap Protection</strong>. Hệ thống tự động phát hiện mọi bất thường về tráo đổi SIM trước khi duyệt lệnh chuyển tiền.
+          </p>
         </div>
 
-        {/* Nút xác nhận */}
+        {/* Submit Button */}
         <button
           type="submit"
-          className="w-full flex items-center justify-center space-x-2 bg-[#1E60E2] hover:bg-blue-600 active:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition transform active:scale-[0.99]"
+          className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-[#EE0033] to-[#BA0024] hover:from-[#E0002F] hover:to-[#A8001F] active:scale-[0.98] text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-red-600/30 transition duration-150"
         >
-          <span>Xác nhận chuyển tiền</span>
           <ShieldCheck className="w-4 h-4" />
+          <span className="text-sm font-bold">Xác nhận chuyển tiền</span>
         </button>
       </form>
     </div>
   );
 }
-

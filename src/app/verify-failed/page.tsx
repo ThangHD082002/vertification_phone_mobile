@@ -2,18 +2,15 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, Mail, RefreshCw, MessageSquare } from 'lucide-react';
+import { AlertTriangle, Mail, RefreshCw, Radio, ArrowRight } from 'lucide-react';
 import { useMock } from '@/context/MockContext';
-import { ConsoleBox } from '@/components/ConsoleBox';
 
 export default function VerifyFailedPage() {
   const router = useRouter();
-  const { phoneNumber, logs } = useMock();
+  const { phoneNumber } = useMock();
 
   const [otpModalVisible, setOtpModalVisible] = useState(false);
   const [otpCode, setOtpCode] = useState('123456');
-
-  const verifyLog = logs.find((l) => l.endpoint.includes('number-verification')) || logs[0];
 
   const handleRetry = () => {
     router.replace('/verify-loading');
@@ -30,107 +27,83 @@ export default function VerifyFailedPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center p-5 pt-8 pb-16">
-      {/* Badge Flow */}
-      <div className="px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[11px] font-bold mb-4">
-        FLOW A4 • FALLBACK
+    <div className="flex-1 flex flex-col items-center p-5 pt-10 pb-16">
+      {/* Alert Badge */}
+      <div className="px-3.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-bold mb-5 flex items-center space-x-1.5">
+        <AlertTriangle className="w-4 h-4" />
+        <span>CHƯA XÁC THỰC QUA 4G</span>
       </div>
 
       {/* Warning Icon */}
-      <div className="w-20 h-20 rounded-full bg-amber-500 flex items-center justify-center text-white mb-4 shadow-lg shadow-amber-500/30">
+      <div className="w-20 h-20 rounded-full bg-amber-500 flex items-center justify-center text-white mb-4 shadow-xl shadow-amber-500/30">
         <AlertTriangle className="w-10 h-10 stroke-[2.5]" />
       </div>
 
-      <h1 className="text-2xl font-bold text-slate-100 mb-1.5 text-center">
+      <h1 className="text-2xl font-bold text-white mb-1.5 text-center">
         Chưa xác thực được
       </h1>
-      <p className="text-xs text-slate-400 text-center max-w-xs leading-relaxed mb-5">
-        Không thể xác minh số thuê bao tự động qua kết nối di động ngầm.
+      <p className="text-xs text-slate-400 text-center max-w-xs leading-relaxed mb-6">
+        Không thể nhận diện số thuê bao tự động qua kết nối di động ngầm.
       </p>
 
       {/* Reasons Card */}
-      <div className="w-full bg-[#162032] border border-[#23324A] rounded-2xl p-4 space-y-2 mb-3 text-xs">
-        <h2 className="text-amber-400 font-bold mb-1.5">Nguyên nhân phổ biến:</h2>
-        <div className="flex items-start space-x-2 text-slate-300">
-          <span className="text-amber-400 font-bold">•</span>
-          <span>Thiết bị đang bật kết nối Wi-Fi (IP thiết bị không đi qua trạm P-GW của Viettel).</span>
+      <div className="w-full bg-[#141824] border border-[#232A3B] rounded-3xl p-5 space-y-3 mb-6 text-xs">
+        <h2 className="text-amber-400 font-bold text-sm mb-1">Gợi ý xử lý:</h2>
+        <div className="flex items-start space-x-2.5 text-slate-300">
+          <Radio className="w-4 h-4 text-[#EE0033] mt-0.5 shrink-0" />
+          <span>Vui lòng <strong>tắt Wi-Fi</strong> và <strong>bật kết nối 4G/5G Viettel</strong> trên điện thoại.</span>
         </div>
-        <div className="flex items-start space-x-2 text-slate-300">
-          <span className="text-amber-400 font-bold">•</span>
+        <div className="flex items-start space-x-2.5 text-slate-300">
+          <span className="text-[#EE0033] font-bold">•</span>
           <span>
-            Khe SIM chính trên máy không phải là số thuê bao: <strong className="text-white font-mono">{phoneNumber}</strong>.
+            Đảm bảo SIM chính trên máy đúng là số thuê bao: <strong className="text-white font-mono">{phoneNumber}</strong>.
           </span>
-        </div>
-        <div className="flex items-start space-x-2 text-slate-300">
-          <span className="text-amber-400 font-bold">•</span>
-          <span>Dữ liệu di động (Cellular Data) chưa được kích hoạt.</span>
         </div>
       </div>
 
-      {/* Console Box */}
-      <ConsoleBox log={verifyLog} defaultTitle="POST /number-verification/v0/verify (400 Bad Request)" />
-
       {/* Action Buttons */}
-      <div className="w-full space-y-2.5 mt-2">
-        <button
-          type="button"
-          onClick={() => setOtpModalVisible(true)}
-          className="w-full flex items-center justify-center space-x-2 bg-[#1E60E2] hover:bg-blue-600 active:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition transform active:scale-[0.99]"
-        >
-          <Mail className="w-4 h-4" />
-          <span>Xác thực bằng OTP qua SMS</span>
-        </button>
-
+      <div className="w-full space-y-3">
         <button
           type="button"
           onClick={handleRetry}
-          className="w-full flex items-center justify-center space-x-2 py-3 text-sky-400 hover:text-sky-300 font-semibold text-xs transition"
+          className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-[#EE0033] to-[#BA0024] hover:from-[#E0002F] hover:to-[#A8001F] active:scale-[0.98] text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-red-600/30 transition duration-150"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>Thử lại kết nối di động</span>
+          <RefreshCw className="w-4 h-4" />
+          <span className="text-sm font-bold">Thử lại qua 4G Viettel</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setOtpModalVisible(true)}
+          className="w-full flex items-center justify-center space-x-2 bg-[#1A2030] hover:bg-[#20283D] text-slate-200 font-bold py-3.5 px-4 rounded-2xl border border-[#2B354B] transition text-xs"
+        >
+          <Mail className="w-4 h-4 text-[#EE0033]" />
+          <span>Đăng nhập bằng mã SMS OTP (Dự phòng)</span>
         </button>
       </div>
 
-      {/* OTP SMS Modal */}
+      {/* OTP Modal */}
       {otpModalVisible && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-sm bg-[#162032] border border-[#23324A] rounded-2xl p-6 text-center shadow-2xl">
-            <div className="w-12 h-12 rounded-full bg-sky-500/15 text-sky-400 flex items-center justify-center mx-auto mb-3">
-              <MessageSquare className="w-6 h-6" />
-            </div>
-
-            <h3 className="text-base font-bold text-slate-100 mb-1">
-              Nhập mã xác thực SMS OTP
-            </h3>
+          <div className="bg-[#141824] border border-[#2B354B] rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
+            <h3 className="text-lg font-bold text-white mb-2">Nhập mã xác thực OTP</h3>
             <p className="text-xs text-slate-400 mb-4">
-              Mã gồm 6 chữ số đã được gửi tới số điện thoại {phoneNumber}
+              Mã xác thực 6 chữ số đã được gửi tới số điện thoại <strong>{phoneNumber}</strong>
             </p>
-
             <form onSubmit={handleConfirmOtp} className="space-y-4">
               <input
                 type="text"
-                value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 maxLength={6}
-                className="w-full bg-[#0F172A] border border-[#334155] rounded-xl py-3 px-4 text-center font-mono text-2xl font-bold tracking-widest text-slate-100 focus:outline-none focus:border-blue-500"
-                autoFocus
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value)}
+                className="w-full text-center font-mono font-black text-2xl tracking-widest bg-[#0B0E17] border border-[#2B354B] rounded-2xl py-3 text-white focus:outline-none focus:border-[#EE0033]"
               />
-
-              <div className="flex space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setOtpModalVisible(false)}
-                  className="flex-1 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs hover:bg-slate-700 transition"
-                >
-                  Hủy
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-[#1E60E2] text-white font-bold text-xs hover:bg-blue-600 transition"
-                >
-                  Xác nhận
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="w-full bg-[#EE0033] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm"
+              >
+                Xác nhận
+              </button>
             </form>
           </div>
         </div>
@@ -138,4 +111,3 @@ export default function VerifyFailedPage() {
     </div>
   );
 }
-
