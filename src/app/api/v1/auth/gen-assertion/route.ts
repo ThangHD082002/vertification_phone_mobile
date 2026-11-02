@@ -70,3 +70,4 @@ export async function GET(request: NextRequest) {
     expires_at: new Date((now + 300) * 1000).toISOString(),
   });
 }
+
