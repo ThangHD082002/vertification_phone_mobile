@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { Check, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useMock } from '@/context/MockContext';
+import { ArrowRight, Check, ShieldCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function TransferSuccessPage() {
   const router = useRouter();
@@ -42,7 +41,7 @@ export default function TransferSuccessPage() {
       <div className="w-full bg-white border border-slate-200/80 rounded-3xl p-5 space-y-3.5 mb-6 text-xs shadow-sm">
         <div className="flex justify-between items-center py-1 border-b border-slate-100">
           <span className="text-slate-500">Tài khoản nguồn:</span>
-          <span className="font-bold text-slate-900 font-mono">Viettel Money ({activePhone})</span>
+          <span className="font-bold text-slate-900 font-mono">Viettel Silent ({activePhone})</span>
         </div>
 
         <div className="flex justify-between items-center py-1 border-b border-slate-100">
@@ -75,7 +74,7 @@ export default function TransferSuccessPage() {
         onClick={handleDone}
         className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-[#EE0033] to-[#BA0024] hover:from-[#E0002F] hover:to-[#A8001F] active:scale-[0.98] text-white font-bold py-3.5 px-4 rounded-2xl shadow-md shadow-red-600/20 transition duration-150"
       >
-        <span className="text-sm font-bold">Về trang chủ Viettel Money</span>
+        <span className="text-sm font-bold">Về trang chủ Viettel Silent</span>
         <ArrowRight className="w-4 h-4" />
       </button>
     </div>

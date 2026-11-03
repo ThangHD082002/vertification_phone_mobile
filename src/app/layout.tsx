@@ -1,10 +1,10 @@
+import { MockProvider } from '@/context/MockContext';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { MockProvider } from '@/context/MockContext';
 
 export const metadata: Metadata = {
-  title: 'Viettel Money - Xác thực & Bảo vệ giao dịch Viettel Open Gateway',
-  description: 'Trải nghiệm ngân hàng số Viettel Money bảo vệ bởi Viettel Open Gateway (Number Verification & SIM Swap)',
+  title: 'Viettel Silent - Xác thực & Bảo vệ giao dịch Viettel Open Gateway',
+  description: 'Trải nghiệm ngân hàng số Viettel Silent bảo vệ bởi Viettel Open Gateway (Number Verification & SIM Swap)',
 };
 
 export const viewport: Viewport = {

@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { Check, Radio, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useMock } from '@/context/MockContext';
+import { ArrowRight, Check, Radio, ShieldCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function VerifySuccessPage() {
   const router = useRouter();
@@ -70,7 +69,7 @@ export default function VerifySuccessPage() {
         onClick={handleGoHome}
         className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-[#EE0033] to-[#BA0024] hover:from-[#E0002F] hover:to-[#A8001F] active:scale-[0.98] text-white font-bold py-3.5 px-4 rounded-2xl shadow-md shadow-red-600/20 transition duration-150"
       >
-        <span className="text-sm font-bold">Vào Viettel Money</span>
+        <span className="text-sm font-bold">Vào Viettel Silent</span>
         <ArrowRight className="w-4 h-4" />
       </button>
     </div>

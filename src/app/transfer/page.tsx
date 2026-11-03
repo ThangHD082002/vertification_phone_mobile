@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, CreditCard, ShieldCheck, Lock } from 'lucide-react';
 import { useMock } from '@/context/MockContext';
+import { ArrowLeft, CreditCard, Lock, ShieldCheck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 export default function TransferPage() {
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function TransferPage() {
       </div>
 
       <form onSubmit={handleConfirmTransfer} className="space-y-4">
-        {/* Nguồn tiền Viettel Money */}
+        {/* Nguồn tiền Viettel Silent */}
         <div className="bg-white border border-slate-200/80 rounded-2xl p-4 text-xs shadow-sm">
           <span className="text-slate-500 block mb-2 font-medium">Nguồn tiền trích nợ:</span>
           <div className="flex items-center space-x-3">
@@ -50,7 +50,7 @@ export default function TransferPage() {
             </div>
             <div>
               <div className="font-mono font-bold text-slate-900 text-sm">
-                Viettel Money ({activePhone})
+                Viettel Silent ({activePhone})
               </div>
               <div className="text-slate-500 text-[11px] mt-0.5">
                 Khả dụng: <strong className="text-emerald-600 font-bold">52.450.000 đ</strong>

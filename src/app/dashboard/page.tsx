@@ -1,22 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { LogoutButton } from '@/components/LogoutButton';
+import { useMock } from '@/context/MockContext';
 import {
-  Eye,
-  EyeOff,
-  Send,
-  Wallet,
-  ShieldCheck,
-  ArrowUpRight,
   ArrowDownLeft,
   ArrowLeftRight,
-  Smartphone,
-  QrCode,
+  ArrowUpRight,
+  Eye,
+  EyeOff,
   Lock,
+  QrCode,
+  Send,
+  ShieldCheck,
+  Smartphone,
+  Wallet,
 } from 'lucide-react';
-import { useMock } from '@/context/MockContext';
-import { LogoutButton } from '@/components/LogoutButton';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function DashboardPage() {
             NB
           </div>
           <div>
-            <span className="text-[11px] text-slate-500 block font-medium">Tài khoản Viettel Money</span>
+            <span className="text-[11px] text-slate-500 block font-medium">Tài khoản Viettel Silent</span>
             <span className="text-base font-bold text-slate-900 tracking-tight">Nguyễn Văn Bình</span>
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Viettel Money Account Card (Iconic Viettel Red Card) */}
+      {/* Viettel Silent Account Card (Iconic Viettel Red Card) */}
       <div className="bg-gradient-to-br from-[#EE0033] via-[#D80027] to-[#99001D] rounded-3xl p-5 shadow-lg shadow-red-500/20 text-white mb-6 relative overflow-hidden">
         {/* Decorative background glow */}
         <div className="absolute -top-12 -right-12 w-36 h-36 bg-white/10 rounded-full blur-xl pointer-events-none" />
