@@ -1,14 +1,14 @@
-import type { Config } from "tailwindcss";
-import path from "path";
+const path = require("path");
 
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: [
-    path.join(__dirname, "src/**/*.{js,ts,jsx,tsx,mdx}"),
+    path.join(__dirname, "src/**/*.{js,ts,jsx,tsx,mdx}").replace(/\\/g, "/"),
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -24,18 +24,8 @@ const config: Config = {
           red: '#EE0033',
           darkRed: '#BA0024',
         },
-        darkBg: "#0B111E",
-        darkCard: "#162032",
-        darkBorder: "#23324A",
-        primaryBlue: "#1E60E2",
-        primaryLight: "#3B82F6",
-        primaryDark: "#1446A0",
-        terminalBg: "#05080F",
-        terminalBorder: "#1E293B",
       },
     },
   },
   plugins: [],
 };
-export default config;
-
