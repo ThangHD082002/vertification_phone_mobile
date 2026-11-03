@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { Phone, Radio, ArrowRight, ShieldCheck, Zap, Lock } from 'lucide-react';
 import { useMock } from '@/context/MockContext';
+import { ArrowRight, Lock, Phone, Radio, ShieldCheck, Zap } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function LoginPage() {
           <div>
             <div className="flex items-center space-x-1.5">
               <span className="text-lg font-black tracking-tight text-slate-900">Viettel</span>
-              <span className="text-lg font-black tracking-tight text-[#EE0033]">Money</span>
+              <span className="text-lg font-black tracking-tight text-[#EE0033]">Silent</span>
             </div>
             <span className="text-[10px] text-slate-500 font-medium block">
               Digital Finance & Telecom Gateway
@@ -44,7 +44,7 @@ export default function LoginPage() {
 
         <div className="flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-semibold shadow-sm">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Open Gateway Live</span>
+          <span>Viettel Gateway Live</span>
         </div>
       </div>
 
