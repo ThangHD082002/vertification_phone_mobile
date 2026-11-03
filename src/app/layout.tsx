@@ -21,12 +21,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className="dark">
-      <body className="bg-[#06080D] text-slate-100 antialiased font-sans">
+    <html lang="vi">
+      <body className="bg-[#E4E8F0] text-slate-800 antialiased font-sans">
         <MockProvider>
-          <div className="min-h-screen bg-[#06080D] flex justify-center">
-            {/* Mobile Viewport Container */}
-            <main className="w-full max-w-[430px] min-h-screen bg-[#0D1017] sm:border-x sm:border-[#1F2430] shadow-2xl relative flex flex-col overflow-x-hidden">
+          <div className="min-h-screen bg-[#E4E8F0] flex justify-center">
+            {/* Mobile Viewport Container - Viettel Light Theme */}
+            <main className="w-full max-w-[430px] min-h-screen bg-[#F4F6FA] sm:border-x sm:border-slate-200/80 shadow-2xl relative flex flex-col overflow-x-hidden text-slate-800">
               {children}
             </main>
           </div>

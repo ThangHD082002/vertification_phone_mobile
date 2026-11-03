@@ -22,7 +22,7 @@ export function LogoutButton({ variant = 'header', label, className = '' }: Logo
       <button
         type="button"
         onClick={handleLogout}
-        className={`w-full flex items-center justify-center space-x-2 border-1.5 border-rose-500 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl py-3 text-sm font-bold transition ${className}`}
+        className={`w-full flex items-center justify-center space-x-2 border border-red-200 bg-red-50 hover:bg-red-100 text-[#EE0033] rounded-2xl py-3 text-sm font-bold transition shadow-sm ${className}`}
       >
         <LogOut className="w-4 h-4" />
         <span>{label || 'Đăng xuất'}</span>
@@ -35,7 +35,7 @@ export function LogoutButton({ variant = 'header', label, className = '' }: Logo
       <button
         type="button"
         onClick={handleLogout}
-        className={`flex items-center justify-center space-x-1 py-2 text-rose-400 hover:text-rose-300 text-xs font-semibold underline ${className}`}
+        className={`flex items-center justify-center space-x-1 py-2 text-[#EE0033] hover:underline text-xs font-semibold ${className}`}
       >
         <LogOut className="w-3.5 h-3.5" />
         <span>{label || 'Đăng xuất về màn Đăng nhập'}</span>
@@ -47,11 +47,10 @@ export function LogoutButton({ variant = 'header', label, className = '' }: Logo
     <button
       type="button"
       onClick={handleLogout}
-      className={`flex items-center space-x-1 bg-rose-500/15 border border-rose-500/30 hover:bg-rose-500/25 text-rose-400 px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${className}`}
+      className={`flex items-center space-x-1 bg-white border border-slate-200 hover:bg-red-50 hover:border-red-200 text-slate-700 hover:text-[#EE0033] px-2.5 py-1.5 rounded-xl text-xs font-bold transition shadow-sm ${className}`}
     >
       <LogOut className="w-3.5 h-3.5" />
       <span>{label || 'Đăng xuất'}</span>
     </button>
   );
 }
-

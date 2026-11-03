@@ -99,12 +99,12 @@ interface MockContextType {
 const MockContext = createContext<MockContextType | undefined>(undefined);
 
 export function MockProvider({ children }: { children: ReactNode }) {
-  const [phoneNumber, setPhoneNumber] = useState('0983 784 276');
+  const [phoneNumber, setPhoneNumberState] = useState('0983 784 276');
   const [verifyScenario, setVerifyScenario] = useState<VerificationScenario>('SUCCESS');
   const [simSwapScenario, setSimSwapScenario] = useState<SimSwapScenario>('SWAPPED_RECENT');
   const [maxAgeHours, setMaxAgeHours] = useState(48);
   const [developerMode, setDeveloperMode] = useState(false);
-  const [themeMode, setThemeMode] = useState<'dark' | 'light'>('dark');
+  const [themeMode, setThemeMode] = useState<'dark' | 'light'>('light');
   const [logs, setLogs] = useState<ApiLog[]>([]);
   const [activeTestCase, setActiveTestCase] = useState<TestCase | null>(DEFAULT_TEST_CASES[0]);
 
@@ -115,6 +115,10 @@ export function MockProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const savedPhone = localStorage.getItem('telco_phone_number') || sessionStorage.getItem('telco_phone_number');
+      if (savedPhone) {
+        setPhoneNumberState(savedPhone);
+      }
       const savedBackendUrl = localStorage.getItem('telco_backend_url');
       if (savedBackendUrl !== null) {
         setBackendUrlState(savedBackendUrl);
@@ -125,6 +129,14 @@ export function MockProvider({ children }: { children: ReactNode }) {
       }
     }
   }, []);
+
+  const setPhoneNumber = (phone: string) => {
+    setPhoneNumberState(phone);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('telco_phone_number', phone);
+      sessionStorage.setItem('telco_phone_number', phone);
+    }
+  };
 
   const setBackendUrl = (url: string) => {
     setBackendUrlState(url);

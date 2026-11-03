@@ -84,39 +84,39 @@ function CallbackContent() {
   }, [code, error, errorDescription, backendUrl, phoneNumber, router]);
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-      <div className="w-20 h-20 rounded-full bg-[#EE0033]/15 border border-[#EE0033]/30 flex items-center justify-center mb-5">
+    <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-[#F4F6FA] text-slate-800">
+      <div className="w-20 h-20 rounded-full bg-red-50 border border-red-200 flex items-center justify-center mb-5 shadow-sm">
         {error ? (
-          <AlertTriangle className="w-10 h-10 text-amber-400" />
+          <AlertTriangle className="w-10 h-10 text-amber-500" />
         ) : (
           <Loader2 className="w-10 h-10 text-[#EE0033] animate-spin" />
         )}
       </div>
 
-      <h1 className="text-xl font-bold text-white mb-2">
+      <h1 className="text-xl font-bold text-slate-900 mb-2">
         {statusMessage}
       </h1>
-      <p className="text-xs text-slate-400 max-w-xs leading-relaxed mb-5">
+      <p className="text-xs text-slate-500 max-w-xs leading-relaxed mb-5">
         {error
           ? 'Không thể hoàn tất ủy quyền. Vui lòng đảm bảo bạn đang sử dụng mạng 4G/5G Viettel.'
           : 'Hệ thống đang trao đổi chữ ký số với Viettel Core Network để hoàn tất đăng nhập.'}
       </p>
 
       {code && (
-        <div className="inline-flex items-center space-x-2 bg-[#141824] border border-[#232A3B] px-3.5 py-1.5 rounded-full text-emerald-400 font-mono text-xs max-w-full truncate mb-4 shadow-sm">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <div className="inline-flex items-center space-x-2 bg-white border border-slate-200 px-3.5 py-1.5 rounded-full text-emerald-700 font-mono text-xs max-w-full truncate mb-4 shadow-sm">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
           <span className="truncate">Code: {code}</span>
         </div>
       )}
 
       {errorDetails && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-300 text-xs p-3 rounded-2xl max-w-xs mb-4">
+        <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-3.5 rounded-2xl max-w-xs mb-4 shadow-sm">
           Chi tiết lỗi: {errorDetails}
         </div>
       )}
 
       <div className="inline-flex items-center space-x-1.5 text-[11px] text-slate-500 mt-2">
-        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
         <span>Bảo mật hạ tầng Viettel Open Gateway Live</span>
       </div>
     </div>
@@ -127,7 +127,7 @@ export default function TelcoCallbackPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center bg-[#F4F6FA]">
           <Loader2 className="w-8 h-8 text-[#EE0033] animate-spin" />
         </div>
       }
