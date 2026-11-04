@@ -84,25 +84,6 @@ export default function TransferPage() {
 
         {/* Thông tin người nhận */}
         <div className="bg-white border border-slate-200/80 rounded-2xl p-4 space-y-3.5 text-xs shadow-sm">
-          <div>
-            <label className="text-slate-600 block mb-1 font-medium">Ngân hàng thụ hưởng:</label>
-            <input
-              type="text"
-              value={recipientBank}
-              onChange={(e) => setRecipientBank(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:bg-white focus:outline-none focus:border-[#EE0033] text-xs font-semibold"
-            />
-          </div>
-
-          <div>
-            <label className="text-slate-600 block mb-1 font-medium">Số tài khoản / Số điện thoại:</label>
-            <input
-              type="text"
-              value={recipientAccount}
-              onChange={(e) => setRecipientAccount(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-mono text-sm focus:bg-white focus:outline-none focus:border-[#EE0033]"
-            />
-          </div>
 
           <div>
             <label className="text-slate-600 block mb-1 font-medium">Tên người nhận:</label>
@@ -149,7 +130,7 @@ export default function TransferPage() {
               <Radio className="w-4 h-4 animate-pulse" />
               <span className="text-sm">Kiểm soát rủi ro viễn thông (SIM Swap Check)</span>
             </div>
-            <span className="text-[10px] bg-red-50 text-[#EE0033] px-2 py-0.5 rounded-full font-bold border border-red-100">
+            <span className="inline-flex items-center justify-center whitespace-nowrap text-[10px] bg-red-50 text-[#EE0033] px-2 py-0.5 rounded-full font-bold border border-red-100">
               Bắt buộc
             </span>
           </div>
@@ -198,8 +179,8 @@ export default function TransferPage() {
                     if (validationError) setValidationError('');
                   }}
                   className={`py-1.5 px-1 rounded-xl text-center font-bold text-[11px] transition border ${maxAge === hours
-                      ? 'bg-[#EE0033] text-white border-[#EE0033] shadow-sm shadow-red-500/20'
-                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                    ? 'bg-[#EE0033] text-white border-[#EE0033] shadow-sm shadow-red-500/20'
+                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                     }`}
                 >
                   {hours === 520 ? '520h (Chuẩn)' : `${hours}h`}
