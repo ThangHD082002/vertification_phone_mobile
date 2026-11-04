@@ -309,69 +309,47 @@ export async function checkSimSwapWithViettel(
   const tokenData = await getClientCredentialsToken();
   const accessToken = tokenData.access_token;
 
-  // 2. Thử các candidate endpoints của Viettel Open Gateway
-  const candidateUrls = [
-    `${VIETTEL_CONFIG.simSwapApiUrl}/check`,
-    'https://developers-api.viettel.vn/sim-swap/v1/check',
-    'https://developers-api.viettel.vn/afp/sim-swap/v1/check',
-  ];
+  // 2. Gọi trực tiếp endpoint Viettel Open Gateway (1 lần duy nhất)
+  const apiUrl = `${VIETTEL_CONFIG.simSwapApiUrl}/check`;
+  const res = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      phoneNumber: formattedPhone,
+      maxAge,
+    }),
+  });
 
-  let lastErrorMsg = '';
-  let finalData: any = null;
-
-  for (const url of candidateUrls) {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          phoneNumber: formattedPhone,
-          maxAge,
-        }),
-      });
-
-      const responseText = await res.text();
-      let data: any = {};
-      try {
-        data = JSON.parse(responseText);
-      } catch {
-        console.warn(`[SIM Swap] Endpoint ${url} trả về không phải JSON:`, responseText);
-      }
-
-      if (res.ok && data && typeof data === 'object') {
-        finalData = data;
-        break;
-      }
-
-      if (res.status === 404) {
-        lastErrorMsg = data?.message || data?.error_description || `Viettel SIM Swap API error: HTTP 404 (${url})`;
-        continue;
-      }
-
-      lastErrorMsg = data?.message || data?.error_description || data?.error || `Viettel SIM Swap API error: HTTP ${res.status}`;
-      break;
-    } catch (e: any) {
-      lastErrorMsg = e?.message || 'Lỗi kết nối Viettel SIM Swap';
-    }
+  const responseText = await res.text();
+  let data: any = {};
+  try {
+    data = JSON.parse(responseText);
+  } catch {
+    console.warn(`[SIM Swap] Endpoint ${apiUrl} trả về không phải JSON:`, responseText);
   }
 
-  if (!finalData) {
-    throw new Error(lastErrorMsg || 'Viettel SIM Swap API error: HTTP 404');
+  if (!res.ok) {
+    const errorMsg =
+      data?.message ||
+      data?.error_description ||
+      data?.error ||
+      `Viettel SIM Swap API error: HTTP ${res.status}`;
+    throw new Error(errorMsg);
   }
 
-  const swapped = Boolean(finalData.swapped);
+  const swapped = Boolean(data.swapped);
   return {
     swapped,
-    latestSimChange: finalData.latestSimChange,
+    latestSimChange: data.latestSimChange,
     riskLevel: swapped ? 'CRITICAL' : 'SAFE',
     message: swapped
       ? 'CẢNH BÁO: Viettel phát hiện SIM vừa bị thay đổi gần đây! Đã kích hoạt cơ chế bảo vệ giao dịch.'
       : 'Viettel xác nhận: SIM an toàn, không có lịch sử tráo SIM trong khoảng thời gian kiểm tra.',
-    raw: finalData,
+    raw: data,
   };
 }
 
