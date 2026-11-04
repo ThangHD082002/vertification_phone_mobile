@@ -1,7 +1,3 @@
-export type VerificationScenario = 'SUCCESS' | 'FAIL' | 'TIMEOUT';
-
-export type SimSwapScenario = 'SAFE' | 'SWAPPED_RECENT' | 'SWAPPED_OLD' | 'ERROR';
-
 export interface ApiLog {
   id: string;
   timestamp: string;
@@ -16,18 +12,6 @@ export interface ApiLog {
   statusText: string;
 }
 
-export interface TestCase {
-  id: string;
-  code: string;
-  title: string;
-  description: string;
-  phoneNumber: string;
-  verifyScenario: VerificationScenario;
-  simSwapScenario: SimSwapScenario;
-  expectedResult: string;
-  badge: 'NORMAL' | 'RISK' | 'FALLBACK';
-}
-
 export interface Transaction {
   id: string;
   title: string;
@@ -36,4 +20,3 @@ export interface Transaction {
   type: 'IN' | 'OUT';
   icon: string;
 }
-

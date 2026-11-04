@@ -1,7 +1,7 @@
 'use client';
 
 import { useMock } from '@/context/MockContext';
-import { ArrowLeft, CreditCard, Lock, ShieldCheck, Phone, Radio, AlertCircle } from 'lucide-react';
+import { AlertCircle, ArrowLeft, CreditCard, Lock, Phone, Radio, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -197,11 +197,10 @@ export default function TransferPage() {
                     setMaxAge(hours);
                     if (validationError) setValidationError('');
                   }}
-                  className={`py-1.5 px-1 rounded-xl text-center font-bold text-[11px] transition border ${
-                    maxAge === hours
+                  className={`py-1.5 px-1 rounded-xl text-center font-bold text-[11px] transition border ${maxAge === hours
                       ? 'bg-[#EE0033] text-white border-[#EE0033] shadow-sm shadow-red-500/20'
                       : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                  }`}
+                    }`}
                 >
                   {hours === 520 ? '520h (Chuẩn)' : `${hours}h`}
                 </button>
