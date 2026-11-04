@@ -1,7 +1,7 @@
 'use client';
 
 import { useMock } from '@/context/MockContext';
-import { ArrowLeft, CreditCard, Lock, ShieldCheck, Radio, AlertCircle } from 'lucide-react';
+import { AlertCircle, ArrowLeft, CreditCard, Lock, Radio, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -201,14 +201,6 @@ export default function TransferPage() {
                 className="w-full bg-transparent px-3 py-2.5 text-slate-900 font-mono text-sm font-bold focus:outline-none tracking-wide"
               />
             </div>
-
-            {/* Live Payload Preview */}
-            <div className="mt-1.5 flex items-center justify-between px-1 text-[11px]">
-              <span className="text-slate-500">Payload gửi Viettel:</span>
-              <span className="font-mono font-bold text-[#EE0033] bg-red-50 px-2 py-0.5 rounded-md border border-red-100">
-                &quot;phoneNumber&quot;: &quot;+84{phoneDigits}&quot;
-              </span>
-            </div>
           </div>
 
           {/* maxAge & Presets */}
@@ -227,11 +219,10 @@ export default function TransferPage() {
                     setMaxAge(hours);
                     if (validationError) setValidationError('');
                   }}
-                  className={`py-1.5 px-1 rounded-xl text-center font-bold text-[11px] transition border ${
-                    maxAge === hours
-                      ? 'bg-[#EE0033] text-white border-[#EE0033] shadow-sm shadow-red-500/20'
-                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                  }`}
+                  className={`py-1.5 px-1 rounded-xl text-center font-bold text-[11px] transition border ${maxAge === hours
+                    ? 'bg-[#EE0033] text-white border-[#EE0033] shadow-sm shadow-red-500/20'
+                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                    }`}
                 >
                   {hours === 600 ? '600h (Test)' : hours === 520 ? '520h (Chuẩn)' : `${hours}h`}
                 </button>
