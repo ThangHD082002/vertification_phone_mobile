@@ -1,7 +1,7 @@
 'use client';
 
 import { useMock } from '@/context/MockContext';
-import { ArrowLeft, CreditCard, Lock, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, CreditCard, Lock, ShieldCheck, Phone, Radio, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -20,8 +20,31 @@ export default function TransferPage() {
   const [amount, setAmount] = useState('20.000.000');
   const [message, setMessage] = useState('Chuyen tien hop dong');
 
+  // Module kiểm tra SIM Swap: Nhập SĐT và maxAge riêng biệt
+  const [simCheckPhone, setSimCheckPhone] = useState('0983 784 276');
+  const [maxAge, setMaxAge] = useState<number>(520);
+  const [validationError, setValidationError] = useState<string>('');
+
   const handleConfirmTransfer = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!simCheckPhone.trim()) {
+      setValidationError('Vui lòng nhập số điện thoại cần kiểm tra SIM Swap');
+      return;
+    }
+
+    if (!maxAge || maxAge <= 0) {
+      setValidationError('Vui lòng chọn hoặc nhập thời gian kiểm tra (maxAge) lớn hơn 0');
+      return;
+    }
+
+    // Lưu thông số vào sessionStorage để màn transfer-check sử dụng trực tiếp
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('telco_sim_check_phone', simCheckPhone.trim());
+      sessionStorage.setItem('telco_sim_check_maxage', String(maxAge));
+      sessionStorage.removeItem('telco_transfer_error');
+    }
+
     router.push('/transfer-check');
   };
 
@@ -50,7 +73,7 @@ export default function TransferPage() {
             </div>
             <div>
               <div className="font-mono font-bold text-slate-900 text-sm">
-                Viettel Silent ({activePhone})
+                Tài khoản thanh toán ({activePhone})
               </div>
               <div className="text-slate-500 text-[11px] mt-0.5">
                 Khả dụng: <strong className="text-emerald-600 font-bold">52.450.000 đ</strong>
@@ -117,6 +140,104 @@ export default function TransferPage() {
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-[#EE0033]"
             />
           </div>
+        </div>
+
+        {/* MODULE KIỂM TRA SIM SWAP BẮT BUỘC - VIETTEL OPEN GATEWAY */}
+        <div className="bg-white border-2 border-red-100 rounded-2xl p-4 space-y-3.5 text-xs shadow-sm">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div className="flex items-center space-x-2 text-[#EE0033] font-bold">
+              <Radio className="w-4 h-4 animate-pulse" />
+              <span className="text-sm">Kiểm soát rủi ro viễn thông (SIM Swap Check)</span>
+            </div>
+            <span className="text-[10px] bg-red-50 text-[#EE0033] px-2 py-0.5 rounded-full font-bold border border-red-100">
+              Bắt buộc
+            </span>
+          </div>
+
+          <p className="text-[11px] text-slate-500 leading-relaxed">
+            Hệ thống sẽ đối soát trực tiếp với cơ sở dữ liệu hạ tầng mạng Viettel theo số thuê bao và khoảng thời gian bên dưới trước khi duyệt lệnh chuyển tiền.
+          </p>
+
+          {/* SĐT kiểm tra */}
+          <div>
+            <label className="text-slate-700 block mb-1 font-semibold flex items-center justify-between">
+              <span>Số điện thoại kiểm tra SIM Swap:</span>
+              <span className="text-[10px] text-red-500 font-bold">* Bắt buộc</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <Phone className="w-4 h-4 text-[#EE0033]" />
+              </div>
+              <input
+                type="text"
+                value={simCheckPhone}
+                onChange={(e) => {
+                  setSimCheckPhone(e.target.value);
+                  if (validationError) setValidationError('');
+                }}
+                placeholder="VD: 0983 784 276 hoặc +84983784276"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 font-mono text-sm font-bold focus:bg-white focus:outline-none focus:border-[#EE0033]"
+              />
+            </div>
+          </div>
+
+          {/* maxAge & Presets */}
+          <div>
+            <label className="text-slate-700 block mb-1.5 font-semibold flex items-center justify-between">
+              <span>Thời gian quét lịch sử đổi SIM (maxAge):</span>
+              <span className="text-[10px] text-red-500 font-bold">* Bắt buộc</span>
+            </label>
+
+            <div className="grid grid-cols-4 gap-1.5 mb-2.5">
+              {[24, 48, 72, 520].map((hours) => (
+                <button
+                  key={hours}
+                  type="button"
+                  onClick={() => {
+                    setMaxAge(hours);
+                    if (validationError) setValidationError('');
+                  }}
+                  className={`py-1.5 px-1 rounded-xl text-center font-bold text-[11px] transition border ${
+                    maxAge === hours
+                      ? 'bg-[#EE0033] text-white border-[#EE0033] shadow-sm shadow-red-500/20'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  {hours === 520 ? '520h (Chuẩn)' : `${hours}h`}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <span className="text-slate-500 text-[11px] shrink-0">Hoặc tự nhập:</span>
+              <div className="flex-1 flex items-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 focus-within:bg-white focus-within:border-[#EE0033]">
+                <input
+                  type="number"
+                  min={1}
+                  max={8760}
+                  value={maxAge || ''}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10);
+                    setMaxAge(isNaN(val) ? 0 : val);
+                    if (validationError) setValidationError('');
+                  }}
+                  className="w-full bg-transparent text-slate-900 font-mono font-bold text-xs focus:outline-none"
+                  placeholder="Nhập số giờ"
+                />
+                <span className="text-slate-500 text-[11px] font-bold ml-1">giờ</span>
+              </div>
+            </div>
+            <p className="text-[10px] text-slate-400 mt-1">
+              * Truy vấn ngược thời gian từ HLR/AUC Viettel (520 giờ tương đương ~21.6 ngày).
+            </p>
+          </div>
+
+          {validationError && (
+            <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs font-semibold flex items-center space-x-1.5">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{validationError}</span>
+            </div>
+          )}
         </div>
 
         {/* Security Info Card */}

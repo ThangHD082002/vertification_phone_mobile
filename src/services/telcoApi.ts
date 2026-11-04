@@ -22,6 +22,7 @@ export interface SimSwapCheckResult {
   riskLevel?: string;
   purpose?: string;
   message?: string;
+  error?: string;
 }
 
 /**
@@ -289,7 +290,12 @@ export async function checkSimSwapWithBackend(
 
   const durationMs = Date.now() - startTime;
   const statusText = `${res.status} ${res.statusText || (res.ok ? 'OK' : 'Error')}`;
-  const responseData: SimSwapCheckResult = await res.json();
+  let responseData: any = {};
+  try {
+    responseData = await res.json();
+  } catch {
+    responseData = { error: `HTTP ${res.status} ${res.statusText || 'Error'}` };
+  }
 
   const log: ApiLog = {
     id: Math.random().toString(36).substring(7),
@@ -304,6 +310,19 @@ export async function checkSimSwapWithBackend(
     durationMs,
     statusText,
   };
+
+  // NẾU API THẤT BẠI (HTTP status không ok) HOẶC CÓ THUỘC TÍNH ERROR
+  // BẮT BUỘC NÉM RA LỖI để client không nhầm lẫn là swapped=false (SIM an toàn)
+  if (!res.ok || responseData?.error) {
+    const errorMsg =
+      responseData?.error ||
+      responseData?.message ||
+      `Viettel SIM Swap API error: HTTP ${res.status}`;
+    const err: any = new Error(errorMsg);
+    err.log = log;
+    err.data = responseData;
+    throw err;
+  }
 
   return { data: responseData, log };
 }

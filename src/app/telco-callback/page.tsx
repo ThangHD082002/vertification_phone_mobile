@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useEffect, useState, useRef, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Loader2, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
-import { verifyNumberWithBackend, getRedirectUri } from '@/services/telcoApi';
 import { useMock } from '@/context/MockContext';
+import { getRedirectUri, verifyNumberWithBackend } from '@/services/telcoApi';
+import { AlertTriangle, CheckCircle2, Loader2, ShieldCheck } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useRef, useState } from 'react';
 
 function CallbackContent() {
   const router = useRouter();

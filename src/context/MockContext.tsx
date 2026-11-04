@@ -92,7 +92,16 @@ interface MockContextType {
   useRealBackend: boolean;
   setUseRealBackend: (useReal: boolean) => void;
   runNumberVerification: (phone: string) => Promise<{ success: boolean; data: any; log: ApiLog }>;
-  runSimSwapCheck: (phone: string, maxAge: number) => Promise<{ swapped: boolean; latestSimChange?: string; log: ApiLog }>;
+  runSimSwapCheck: (
+    phone: string,
+    maxAge: number
+  ) => Promise<{
+    success: boolean;
+    swapped: boolean;
+    error?: string;
+    latestSimChange?: string;
+    log: ApiLog;
+  }>;
   clearLogs: () => void;
 }
 
@@ -219,20 +228,27 @@ export function MockProvider({ children }: { children: ReactNode }) {
   const runSimSwapCheck = async (
     phone: string,
     maxAge: number
-  ): Promise<{ swapped: boolean; latestSimChange?: string; log: ApiLog }> => {
+  ): Promise<{
+    success: boolean;
+    swapped: boolean;
+    error?: string;
+    latestSimChange?: string;
+    log: ApiLog;
+  }> => {
     const startTime = Date.now();
     try {
       console.log(`[Telco] Kiểm tra SIM Swap thật với Viettel: phone=${phone}, maxAge=${maxAge}h`);
       const { data, log } = await checkSimSwapWithBackend(backendUrl, phone, maxAge);
       setLogs((prev) => [log, ...prev]);
       return {
+        success: true,
         swapped: data.swapped === true,
         latestSimChange: data.latestSimChange,
         log,
       };
     } catch (err: any) {
       console.error(`[Telco] Lỗi gọi Viettel SIM Swap: ${err?.message}`);
-      const failLog: ApiLog = {
+      const failLog: ApiLog = err?.log || {
         id: Math.random().toString(36).substring(7),
         timestamp: new Date().toISOString(),
         method: 'POST',
@@ -248,8 +264,17 @@ export function MockProvider({ children }: { children: ReactNode }) {
         durationMs: Date.now() - startTime,
         statusText: '400 Bad Request',
       };
-      setLogs((prev) => [failLog, ...prev]);
-      return { swapped: false, log: failLog };
+      if (err?.log) {
+        setLogs((prev) => [err.log, ...prev]);
+      } else {
+        setLogs((prev) => [failLog, ...prev]);
+      }
+      return {
+        success: false,
+        swapped: false,
+        error: err?.message || 'Không thể kết nối máy chủ SIM Swap Viettel',
+        log: failLog,
+      };
     }
   };
 
