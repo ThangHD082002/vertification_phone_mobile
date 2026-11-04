@@ -105,26 +105,6 @@ export default function TransferPage() {
         {/* Thông tin người nhận */}
         <div className="bg-white border border-slate-200/80 rounded-2xl p-4 space-y-3.5 text-xs shadow-sm">
           <div>
-            <label className="text-slate-600 block mb-1 font-medium">Ngân hàng thụ hưởng:</label>
-            <input
-              type="text"
-              value={recipientBank}
-              onChange={(e) => setRecipientBank(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:bg-white focus:outline-none focus:border-[#EE0033] text-xs font-semibold"
-            />
-          </div>
-
-          <div>
-            <label className="text-slate-600 block mb-1 font-medium">Số tài khoản / Số điện thoại:</label>
-            <input
-              type="text"
-              value={recipientAccount}
-              onChange={(e) => setRecipientAccount(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-mono text-sm focus:bg-white focus:outline-none focus:border-[#EE0033]"
-            />
-          </div>
-
-          <div>
             <label className="text-slate-600 block mb-1 font-medium">Tên người nhận:</label>
             <input
               type="text"
