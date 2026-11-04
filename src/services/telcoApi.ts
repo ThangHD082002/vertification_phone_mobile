@@ -270,7 +270,16 @@ export async function checkSimSwapWithBackend(
   maxAge: number = 48
 ): Promise<{ data: SimSwapCheckResult; log: ApiLog }> {
   const startTime = Date.now();
-  const cleanPhone = phoneNumber.replace(/\s+/g, '');
+  let cleanPhone = phoneNumber.replace(/[^0-9+]/g, '');
+  if (cleanPhone.startsWith('+0')) {
+    cleanPhone = `+84${cleanPhone.slice(2)}`;
+  } else if (cleanPhone.startsWith('0')) {
+    cleanPhone = `+84${cleanPhone.slice(1)}`;
+  } else if (cleanPhone.startsWith('84') && !cleanPhone.startsWith('+')) {
+    cleanPhone = `+${cleanPhone}`;
+  } else if (!cleanPhone.startsWith('+84') && !cleanPhone.startsWith('+')) {
+    cleanPhone = `+84${cleanPhone}`;
+  }
   const url = formatApiUrl(backendUrl, '/sim-swap/check');
   const payload = {
     phoneNumber: cleanPhone,

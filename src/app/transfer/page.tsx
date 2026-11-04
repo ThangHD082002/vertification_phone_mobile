@@ -1,7 +1,7 @@
 'use client';
 
 import { useMock } from '@/context/MockContext';
-import { AlertCircle, ArrowLeft, CreditCard, Lock, Phone, Radio, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, CreditCard, Lock, ShieldCheck, Radio, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -20,16 +20,33 @@ export default function TransferPage() {
   const [amount, setAmount] = useState('20.000.000');
   const [message, setMessage] = useState('Chuyen tien hop dong');
 
-  // Module kiểm tra SIM Swap: Nhập SĐT và maxAge riêng biệt
-  const [simCheckPhone, setSimCheckPhone] = useState('0983 784 276');
-  const [maxAge, setMaxAge] = useState<number>(520);
+  // Module kiểm tra SIM Swap: Cố định đầu +84, chỉ lưu các chữ số thuê bao phía sau
+  const [phoneDigits, setPhoneDigits] = useState('368682926');
+  const [maxAge, setMaxAge] = useState<number>(600);
   const [validationError, setValidationError] = useState<string>('');
+
+  const handlePhoneDigitsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value.replace(/[^0-9]/g, '');
+    // Nếu người dùng gõ hoặc paste số bắt đầu bằng 84 (ví dụ 84368682926) hoặc 0 (ví dụ 0339046482)
+    if (val.startsWith('84') && val.length > 9) {
+      val = val.slice(2);
+    } else if (val.startsWith('0')) {
+      val = val.slice(1);
+    }
+    setPhoneDigits(val);
+    if (validationError) setValidationError('');
+  };
 
   const handleConfirmTransfer = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!simCheckPhone.trim()) {
+    if (!phoneDigits.trim()) {
       setValidationError('Vui lòng nhập số điện thoại cần kiểm tra SIM Swap');
+      return;
+    }
+
+    if (phoneDigits.trim().length < 8) {
+      setValidationError('Số điện thoại không hợp lệ (phải có ít nhất 9 chữ số)');
       return;
     }
 
@@ -38,9 +55,12 @@ export default function TransferPage() {
       return;
     }
 
+    // Format chuẩn Viettel Open Gateway: +84xxxxxxxxx (VD: +84368682926)
+    const formattedPhone = `+84${phoneDigits.trim()}`;
+
     // Lưu thông số vào sessionStorage để màn transfer-check sử dụng trực tiếp
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem('telco_sim_check_phone', simCheckPhone.trim());
+      sessionStorage.setItem('telco_sim_check_phone', formattedPhone);
       sessionStorage.setItem('telco_sim_check_maxage', String(maxAge));
       sessionStorage.removeItem('telco_transfer_error');
     }
@@ -84,6 +104,25 @@ export default function TransferPage() {
 
         {/* Thông tin người nhận */}
         <div className="bg-white border border-slate-200/80 rounded-2xl p-4 space-y-3.5 text-xs shadow-sm">
+          <div>
+            <label className="text-slate-600 block mb-1 font-medium">Ngân hàng thụ hưởng:</label>
+            <input
+              type="text"
+              value={recipientBank}
+              onChange={(e) => setRecipientBank(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:bg-white focus:outline-none focus:border-[#EE0033] text-xs font-semibold"
+            />
+          </div>
+
+          <div>
+            <label className="text-slate-600 block mb-1 font-medium">Số tài khoản / Số điện thoại:</label>
+            <input
+              type="text"
+              value={recipientAccount}
+              onChange={(e) => setRecipientAccount(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-mono text-sm focus:bg-white focus:outline-none focus:border-[#EE0033]"
+            />
+          </div>
 
           <div>
             <label className="text-slate-600 block mb-1 font-medium">Tên người nhận:</label>
@@ -139,26 +178,36 @@ export default function TransferPage() {
             Hệ thống sẽ đối soát trực tiếp với cơ sở dữ liệu hạ tầng mạng Viettel theo số thuê bao và khoảng thời gian bên dưới trước khi duyệt lệnh chuyển tiền.
           </p>
 
-          {/* SĐT kiểm tra */}
+          {/* SĐT kiểm tra với đầu +84 cố định */}
           <div>
             <label className="text-slate-700 block mb-1 font-semibold flex items-center justify-between">
               <span>Số điện thoại kiểm tra SIM Swap:</span>
               <span className="text-[10px] text-red-500 font-bold">* Bắt buộc</span>
             </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <Phone className="w-4 h-4 text-[#EE0033]" />
+
+            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl focus-within:bg-white focus-within:border-[#EE0033] focus-within:ring-1 focus-within:ring-[#EE0033]/20 transition overflow-hidden">
+              {/* Prefix +84 cố định */}
+              <div className="flex items-center space-x-1.5 px-3 py-2.5 bg-slate-100 border-r border-slate-200 text-slate-800 font-mono font-bold text-sm shrink-0 select-none">
+                <span className="w-2 h-2 rounded-full bg-[#EE0033]" />
+                <span className="text-[#EE0033] font-bold">+84</span>
               </div>
+
+              {/* Input các chữ số sau +84 */}
               <input
-                type="text"
-                value={simCheckPhone}
-                onChange={(e) => {
-                  setSimCheckPhone(e.target.value);
-                  if (validationError) setValidationError('');
-                }}
-                placeholder="VD: 0983 784 276 hoặc +84983784276"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 text-slate-900 font-mono text-sm font-bold focus:bg-white focus:outline-none focus:border-[#EE0033]"
+                type="tel"
+                value={phoneDigits}
+                onChange={handlePhoneDigitsChange}
+                placeholder="368682926 hoặc 0339046482"
+                className="w-full bg-transparent px-3 py-2.5 text-slate-900 font-mono text-sm font-bold focus:outline-none tracking-wide"
               />
+            </div>
+
+            {/* Live Payload Preview */}
+            <div className="mt-1.5 flex items-center justify-between px-1 text-[11px]">
+              <span className="text-slate-500">Payload gửi Viettel:</span>
+              <span className="font-mono font-bold text-[#EE0033] bg-red-50 px-2 py-0.5 rounded-md border border-red-100">
+                &quot;phoneNumber&quot;: &quot;+84{phoneDigits}&quot;
+              </span>
             </div>
           </div>
 
@@ -170,7 +219,7 @@ export default function TransferPage() {
             </label>
 
             <div className="grid grid-cols-4 gap-1.5 mb-2.5">
-              {[24, 48, 72, 520].map((hours) => (
+              {[24, 48, 520, 600].map((hours) => (
                 <button
                   key={hours}
                   type="button"
@@ -178,12 +227,13 @@ export default function TransferPage() {
                     setMaxAge(hours);
                     if (validationError) setValidationError('');
                   }}
-                  className={`py-1.5 px-1 rounded-xl text-center font-bold text-[11px] transition border ${maxAge === hours
-                    ? 'bg-[#EE0033] text-white border-[#EE0033] shadow-sm shadow-red-500/20'
-                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                    }`}
+                  className={`py-1.5 px-1 rounded-xl text-center font-bold text-[11px] transition border ${
+                    maxAge === hours
+                      ? 'bg-[#EE0033] text-white border-[#EE0033] shadow-sm shadow-red-500/20'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                  }`}
                 >
-                  {hours === 520 ? '520h (Chuẩn)' : `${hours}h`}
+                  {hours === 600 ? '600h (Test)' : hours === 520 ? '520h (Chuẩn)' : `${hours}h`}
                 </button>
               ))}
             </div>
@@ -208,7 +258,7 @@ export default function TransferPage() {
               </div>
             </div>
             <p className="text-[10px] text-slate-400 mt-1">
-              * Truy vấn ngược thời gian từ HLR/AUC Viettel (520 giờ tương đương ~21.6 ngày).
+              * Truy vấn ngược thời gian từ HLR/AUC Viettel (600 giờ tương đương 25 ngày).
             </p>
           </div>
 

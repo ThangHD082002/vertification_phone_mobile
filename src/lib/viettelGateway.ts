@@ -48,7 +48,7 @@ export const VIETTEL_CONFIG = {
   tokenUrl: 'https://developers-access.viettel.vn/security-domain/oauth/token',
   authorizeUrl: 'https://developers-access.viettel.vn/security-domain/oauth/authorize',
   numberVerifyApiUrl: 'https://developers-api.viettel.vn/number-verification/v1',
-  simSwapApiUrl: 'https://developers-api.viettel.vn/sim-swap-int/v1',
+  simSwapApiUrl: 'https://developers-api.viettel.vn/sim-swap/v1',
   scopeNumberVerify: 'number-verification:verify number-verification:device-phone-number',
   scopeSimSwap: 'sim-swap sim-swap:check sim-swap:retrieve-date',
   get privateKeyPem() {
@@ -57,16 +57,32 @@ export const VIETTEL_CONFIG = {
 };
 
 /**
- * Chuẩn hóa số điện thoại:
- * Giữ nguyên nếu đã có dấu + (VD: +84983784276 hoặc +0983784276 theo yêu cầu API)
- * Tự động thêm +84 nếu người dùng nhập số 0 đầu (0983784276 -> +84983784276)
+ * Chuẩn hóa số điện thoại theo chuẩn quốc tế Viettel Open Gateway (+84xxxxxxxxx):
+ * - 0339046482 -> +84339046482
+ * - +0339046482 -> +84339046482
+ * - 84339046482 -> +84339046482
+ * - +84339046482 -> +84339046482
+ * - 339046482 -> +84339046482
  */
 export function formatPhoneNumber(phone: string): string {
-  const clean = phone.replace(/[^0-9+]/g, '');
-  if (clean.startsWith('+')) return clean;
-  if (clean.startsWith('84')) return `+${clean}`;
-  if (clean.startsWith('0')) return `+84${clean.slice(1)}`;
-  return clean ? `+${clean}` : clean;
+  let clean = phone.replace(/[^0-9+]/g, '');
+  if (clean.startsWith('+0')) {
+    clean = clean.slice(2);
+    return `+84${clean}`;
+  }
+  if (clean.startsWith('+84')) {
+    return clean;
+  }
+  if (clean.startsWith('84')) {
+    return `+${clean}`;
+  }
+  if (clean.startsWith('0')) {
+    return `+84${clean.slice(1)}`;
+  }
+  if (clean.startsWith('+')) {
+    return clean;
+  }
+  return clean ? `+84${clean}` : clean;
 }
 
 /**
